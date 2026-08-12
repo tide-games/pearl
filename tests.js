@@ -1,8 +1,9 @@
 // tests.js — run: node tests.js  (exits non-zero on failure)
 import { createHash } from 'node:crypto';
 import {
-  ROWS, SLOTS, PATHS, BONUS_PEGS, BONUS_PAY, TABLES, TABLE_KEYS,
-  pathFromSeed, slotOf, trackOf, bonusHits, quote, settle, verifyDrop, evOf,
+  COLS, ROWS, DROPS, BUMPERS, SHELL, WALL_PAY, BUMPER_PAY, SHELL_PAY,
+  RUN_PAY, RUN_SLOT, SLOT_PAY,
+  stepsFromSeed, walk, settle, verifyDrop, maxPayout, exactStats, evOf,
 } from './pearl.js';
 
 let fails = 0;
@@ -11,89 +12,107 @@ function ok(cond, name, detail) {
   else { fails++; console.error('  FAIL', name, detail ?? ''); }
 }
 const sha256 = (s) => createHash('sha256').update(s).digest('hex');
-const comb = (n, k) => { let c = 1; for (let i = 1; i <= k; i++) c = (c * (n - i + 1)) / i; return c; };
 
-// ---- the path convention
+// ---- the step convention
 {
-  const p = pathFromSeed('0'.repeat(64));
-  ok(p.length === ROWS && p.every((b) => b === 0), 'seed 0 drops straight left');
-  const q = pathFromSeed('fff'); // low 12 bits all set
-  ok(q.every((b) => b === 1) && slotOf(q) === ROWS, 'seed 0xfff drops straight right');
-  const a = pathFromSeed(sha256('tide')), b = pathFromSeed(sha256('tide'));
-  ok(JSON.stringify(a) === JSON.stringify(b), 'the same seed drops the same pearl');
-  // bit i = row i, little-endian off the BigInt: 0b000000000101 → rows 0 and 2 right
-  const r = pathFromSeed('5');
-  ok(r[0] === 1 && r[1] === 0 && r[2] === 1 && slotOf(r) === 2, 'bit order is row order');
+  const s = stepsFromSeed('0'.repeat(64));
+  ok(s.length === ROWS && s.every((x) => x === -1), 'seed 0: every pair 00 → all left');
+  const r = stepsFromSeed('ffffff'); // 24 set bits
+  ok(r.every((x) => x === 1), 'all-ones: every pair 11 → all right');
+  const m = stepsFromSeed('5'); // 0b0101 → rows 0,1 straight
+  ok(m[0] === 0 && m[1] === 0, '01/10 pairs go straight');
+  ok(JSON.stringify(stepsFromSeed(sha256('x'))) === JSON.stringify(stepsFromSeed(sha256('x'))),
+    'the same seed steps the same steps');
 }
 
-// ---- EXHAUSTIVE truth: every one of the 4096 paths, no sampling
+// ---- the walk
 {
-  const counts = Array(SLOTS).fill(0);
-  const pegCounts = BONUS_PEGS.map(() => 0);
-  const evSum = Object.fromEntries(TABLE_KEYS.map((k) => [k, 0]));
-  for (let v = 0; v < PATHS; v++) {
-    const path = pathFromSeed(v.toString(16));
-    counts[slotOf(path)]++;
-    bonusHits(path).forEach((p) => { pegCounts[BONUS_PEGS.indexOf(p)]++; });
-    for (const k of TABLE_KEYS) {
-      const s = settle({ table: k, stake: 1000, seedHex: v.toString(16) });
-      evSum[k] += s.payout;
-    }
-  }
-  ok(counts.every((c, k) => c === comb(ROWS, k)),
-    'all 4096 paths: slots land exactly on the binomial', JSON.stringify(counts));
-  ok(BONUS_PEGS.every((p, i) => pegCounts[i] === (comb(p.row, p.pos) / 2 ** p.row) * PATHS),
-    'all 4096 paths: bonus pegs struck exactly at C(r,p)/2^r');
-  for (const k of TABLE_KEYS) {
-    const edge = 1 - evSum[k] / (PATHS * 1000);
+  const w = walk(2, '0'.repeat(64)); // all-left from notch 2: hits wall, hugs it
+  ok(w.slot === 0 && w.walls === 10, 'all-left from notch 2 hugs the left wall (10 clunks)',
+    JSON.stringify({ slot: w.slot, walls: w.walls }));
+  const c = walk(6, '5'.repeat(6)); // straights → drops dead centre
+  ok(c.track.every((p) => p === 6) && c.slot === 6, 'all-straight from centre never leaves the line');
+  ok(c.shell === true, 'and strikes the shell on the way');
+  let threw = false;
+  try { walk(3, 'ff'); } catch { threw = true; }
+  ok(threw, 'only the five notches may drop');
+}
+
+// ---- exact economics: the DP mirror pins every notch's edge
+{
+  for (const d of DROPS) {
+    const edge = 1 - evOf(d);
     ok(edge > 0.025 && edge < 0.035,
-      `HOUSE RULE: ${k} edge ≈3% under exhaustive play (${(edge * 100).toFixed(2)}%)`);
-    // the closed form must agree with brute force (flooring costs a whisker)
-    ok(Math.abs(1 - evOf(k) - edge) < 0.002, `${k}: evOf agrees with enumeration`);
+      `HOUSE RULE: notch ${d} edge ≈3% (${(edge * 100).toFixed(2)}%)`);
+  }
+  // mirrored notches face mirrored boards — identical edges
+  ok(Math.abs(evOf(2) - evOf(10)) < 1e-12 && Math.abs(evOf(4) - evOf(8)) < 1e-12,
+    'the board is honest under reflection');
+  // DP mass conserves
+  for (const d of DROPS) {
+    const s = exactStats(d);
+    ok(Math.abs(s.slots.reduce((a, b) => a + b, 0) - 1) < 1e-12, `notch ${d}: probability mass conserves`);
   }
 }
 
-// ---- tables are protocol
+// ---- sampling agrees with the DP (100k drops from the centre notch)
 {
-  ok(TABLE_KEYS.length === 3, 'three rides');
-  for (const k of TABLE_KEYS) {
-    const m = TABLES[k];
-    ok(m.length === SLOTS, `${k} covers every slot`);
-    ok(m.every((v, i) => v === m[SLOTS - 1 - i]), `${k} is symmetric — no better side`);
-    ok(Math.max(...m) === m[0], `${k} pays its maximum at the rim`);
+  const N = 100_000;
+  const s = exactStats(6);
+  let hitsShell = 0, slots6 = 0, walls = 0;
+  for (let i = 0; i < N; i++) {
+    const w = walk(6, sha256('mc' + i));
+    if (w.shell) hitsShell++;
+    if (w.slot === 6) slots6++;
+    walls += w.walls;
   }
-  ok(TABLES.storm[0] > TABLES.swell[0] && TABLES.swell[0] > TABLES.calm[0],
-    'storm > swell > calm at the rim: the shapes differ, the edge does not');
+  const tol = (p) => 4 * Math.sqrt(p * (1 - p) / N);
+  ok(Math.abs(hitsShell / N - s.eshell) < tol(s.eshell), '100k drops: shell rate matches the DP (4σ)');
+  ok(Math.abs(slots6 / N - s.slots[6]) < tol(s.slots[6]), '100k drops: centre landings match the DP (4σ)');
+  ok(Math.abs(walls / N - s.ewall) < 0.01, '100k drops: wall clunks match the DP');
 }
 
 // ---- settling
 {
-  const s = settle({ table: 'calm', stake: 100, seedHex: sha256('drop1') });
-  ok(Number.isInteger(s.payout) && s.payout === s.slotPay + s.bonusPay, 'payout is whole coins, sum of parts');
-  ok(s.delta === s.payout - 100, 'delta is against the stake');
-  const v = verifyDrop({ seedHex: sha256('drop1'), table: 'calm', stake: 100 });
-  ok(JSON.stringify(v) === JSON.stringify(s), 'verifyDrop replays the identical drop');
-  const center = settle({ table: 'storm', stake: 100, seedHex: 'fc0' }); // bits: six 0s then six 1s → slot 6
-  ok(center.slot === 6 && center.slotPay === Math.floor(100 * TABLES.storm[6]),
-    'a known seed lands a known slot at the table price', JSON.stringify({ slot: center.slot }));
+  const s = settle({ drop: 6, stake: 100, seedHex: sha256('d1') });
+  ok(Number.isInteger(s.payout)
+    && s.payout === s.slotPay + s.wallPay + s.bumperPay + s.shellPay + s.runPay,
+    'payout is whole coins, the sum of its parts');
+  const v = verifyDrop({ drop: 6, stake: 100, seedHex: sha256('d1') });
+  ok(JSON.stringify(v) === JSON.stringify(s), 'verifyDrop replays the identical fall');
+  // the pearl run pays the dream: shell + bumper + centre landing
+  const run = settle({ drop: 6, stake: 100, seedHex: sha256('d1') });
+  ok(maxPayout(100) === 100 * RUN_PAY + Math.floor(100 * SLOT_PAY[RUN_SLOT])
+    + Math.floor(100 * BUMPER_PAY) + Math.floor(100 * SHELL_PAY),
+    'maxPayout names the full dream');
   let threw = false;
-  try { settle({ table: 'tsunami', stake: 100, seedHex: 'ff' }); } catch { threw = true; }
-  ok(threw, 'an unknown table refuses to settle');
-  threw = false;
-  try { quote('calm', 0); } catch { threw = true; }
-  ok(threw, 'a zero stake refuses to quote');
+  try { settle({ drop: 6, stake: 0, seedHex: 'ff' }); } catch { threw = true; }
+  ok(threw, 'a zero stake refuses to settle');
 }
 
-// ---- bonus pegs
+// ---- the pearl run exists and is rare (exact, from the DP)
 {
-  // straight-centre zigzag 0b101010101010 = 0xaaa: track hits 2@4? bits alternate 0,1…
-  const p = pathFromSeed('aaa');
-  const t = trackOf(p);
-  ok(t[4] === 2 && t[6] === 3 && t[8] === 4, 'the perfect zigzag rides the centre line');
-  ok(bonusHits(p).length === 3, 'and strikes every bonus peg on the way down');
-  const q = quote('calm', 100);
-  ok(q.bonusEach === 10 && q.maxPayout === Math.floor(100 * 11) + 30,
-    'quote prices the rim plus a full string of pearls');
+  const best = Math.max(...DROPS.map((d) => exactStats(d).erun));
+  ok(best > 0, 'the pearl run is possible');
+  ok(best < 0.001, `and rare — best notch ≈1 in ${Math.round(1 / best).toLocaleString()}`);
+  // hand-build a run: straight to shell, drift to bumper, return to centre
+  // steps: rows1-4 straight (shell at (4,6)); rows5-7: -1,-1,-1 → pos 3 at row7 (bumper);
+  // rows8-12: +1,+1,+1,0,0 → pos 6. Encode pairs: -1=00, 0=01, +1=11.
+  const pairs = [1, 1, 1, 1, 0, 0, 0, 3, 3, 3, 1, 1];
+  let v = 0n;
+  pairs.forEach((p, i) => { v |= BigInt(p) << BigInt(2 * i); });
+  const w = walk(6, v.toString(16));
+  ok(w.run === true, 'a hand-built shell→bumper→centre fall IS a pearl run',
+    JSON.stringify({ slot: w.slot, shell: w.shell, bumpers: w.bumpers }));
+  const paid = settle({ drop: 6, stake: 100, seedHex: v.toString(16) });
+  ok(paid.runPay === 1000, 'and it pays ×10 on the nose');
+}
+
+// ---- table sanity
+{
+  ok(SLOT_PAY.length === COLS, 'a payout for every oyster');
+  ok(SLOT_PAY.every((v, i) => v === SLOT_PAY[COLS - 1 - i]), 'the floor is symmetric');
+  ok(SLOT_PAY.every((v) => v > 0 && v < 1.5), 'the floor is the floor — features are the game');
 }
 
 if (fails) { console.error(`\n${fails} FAILURE(S)`); process.exit(1); }

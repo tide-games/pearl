@@ -22,25 +22,66 @@ ctx.lineCap='round';
     for(let s=1;s<=6;s++){const yy=H-30-s*90;const sw=Math.sin(ki*2+f+s*.8)*(6+s*3);
       ctx.quadraticCurveTo(x0+sw*.6,yy+40,x0+sw,yy);}ctx.stroke();}
 });
-// pins (partial triangle, right-of-center)
-const CX=640,TOP=120,GAP=54,PITCH=78;
-const posX=(r,p)=>CX+(p-r/2)*PITCH, rowY=(r)=>TOP+r*GAP;
-for(let r=0;r<7;r++)for(let p=0;p<=r;p++){
-  const x=posX(r,p),y=rowY(r);
-  const bonus=(r===4&&p===2)||(r===6&&p===3);
-  if(bonus){ctx.fillStyle='#e8c886';ctx.beginPath();ctx.arc(x,y,15,0,7);ctx.fill();
-    ctx.strokeStyle='#8a6508';ctx.lineWidth=2.5;ctx.stroke();
-    ctx.fillStyle='#8a6508';ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();}
-  else{ctx.fillStyle='#d98e75';ctx.beginPath();ctx.arc(x,y,9,0,7);ctx.fill();
-    ctx.strokeStyle='rgba(90,30,20,.5)';ctx.lineWidth=1.5;ctx.stroke();}
+// the v2 board: rails, notches, peg grid, twin bumpers, the shell
+const CX=640,TOP=150,GAP=44,PITCH=64,RAILX=CX-6.4*PITCH;
+const px2=(p)=>CX+(p-6)*PITCH;
+// header rail + notches
+ctx.fillStyle='#173f52'; ctx.fillRect(RAILX-30,TOP-64,12.8*PITCH+60,10);
+[2,4,6,8,10].forEach((d,i)=>{
+  const x=px2(d), sel=d===6;
+  ctx.fillStyle=sel?'rgba(255,240,200,.95)':'rgba(190,215,225,.9)';
+  ctx.beginPath(); ctx.moveTo(x-18,TOP-56); ctx.lineTo(x+18,TOP-56); ctx.lineTo(x+10,TOP-34); ctx.lineTo(x-10,TOP-34); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle=sel?'#c9a24b':'rgba(20,50,65,.7)'; ctx.lineWidth=sel?3:1.5; ctx.stroke();
+});
+// side rails with studs
+for(const sx of [RAILX-34, CX+6.4*PITCH+4]){
+  ctx.fillStyle='#173f52'; ctx.fillRect(sx,TOP-54,30,H-TOP-40);
+  ctx.fillStyle='#3f7d95';
+  for(let r=0;r<8;r++){ ctx.beginPath(); ctx.arc(sx+15,TOP+10+r*44,6,0,7); ctx.fill(); }
+}
+// peg grid
+for(let r=1;r<=7;r++){
+  const y=TOP+r*GAP-GAP/2, off=(r%2)?0.5:0;
+  for(let c=0;c<13-((r%2)?1:0);c++){
+    const x=px2(c+off-0);
+    if(x<RAILX||x>CX+6.4*PITCH) continue;
+    ctx.fillStyle=(r===3||r===6)?'#e4a77f':'#d98e75';
+    ctx.beginPath(); ctx.arc(x,y,6,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(90,30,20,.45)'; ctx.lineWidth=1.2; ctx.stroke();
+  }
+}
+// the shell (glowing) at row 3 centre
+(function(){ const x=px2(6), y=TOP+3*GAP-GAP/2;
+  const rg=ctx.createRadialGradient(x,y,4,x,y,52);
+  rg.addColorStop(0,'rgba(255,230,150,.5)'); rg.addColorStop(1,'rgba(255,230,150,0)');
+  ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,52,0,7); ctx.fill();
+  ctx.fillStyle='#e8c886'; ctx.strokeStyle='#8a6508'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.ellipse(x,y+4,24,18,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+  for(let i=-2;i<=2;i++){ ctx.beginPath(); ctx.moveTo(x,y+4); ctx.lineTo(x+i*10,y-13); ctx.strokeStyle='rgba(138,101,8,.6)'; ctx.lineWidth=1.6; ctx.stroke(); }
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y-2,5,0,7); ctx.fill();
+})();
+// twin bumpers at row 6
+for(const p of [3,9]){
+  const x=px2(p), y=TOP+6*GAP-GAP/2;
+  const rg=ctx.createRadialGradient(x,y,6,x,y,64);
+  rg.addColorStop(0,'rgba(255,180,120,.4)'); rg.addColorStop(1,'rgba(255,180,120,0)');
+  ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,64,0,7); ctx.fill();
+  const bg2=ctx.createRadialGradient(x-6,y-7,3,x,y,32);
+  bg2.addColorStop(0,'#ffcf9a'); bg2.addColorStop(0.6,'#e8935f'); bg2.addColorStop(1,'#b35a37');
+  ctx.fillStyle=bg2; ctx.beginPath(); ctx.arc(x,y,32,0,7); ctx.fill();
+  ctx.strokeStyle='#6d2e18'; ctx.lineWidth=3; ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(x,y,25,0,7); ctx.stroke();
+  ctx.fillStyle='#5c2412'; ctx.font='800 17px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('×.4',x,y+1); ctx.textBaseline='alphabetic';
 }
 // seabed + oysters
 const sb=ctx.createLinearGradient(0,H-120,0,H);
 sb.addColorStop(0,'rgba(232,215,175,0)');sb.addColorStop(.3,'#cdb98e');sb.addColorStop(1,'#b9a276');
 ctx.fillStyle=sb;ctx.fillRect(0,H-120,W,120);
-const mults=['×0.11','×0.54','×1.74','×27','×163'];
+const mults=['×0.94','×0.9','×0.85','×0.9','×0.91'];
 for(let k=0;k<9;k++){
-  const x=CX+(k-4)*PITCH, hot=k===0||k===8;
+  const x=CX+(k-4)*PITCH, hot=k===4;
   const lbl=mults[Math.abs(k-4)];
   ctx.fillStyle=hot?'#e8c886':'#d3c4a8';
   ctx.strokeStyle='rgba(60,45,25,.55)';ctx.lineWidth=2;
@@ -52,7 +93,7 @@ for(let k=0;k<9;k++){
 }
 // THE pearl — big, mid-bounce, with sparkle trail
 (function(){
-  const x=755,y=248;
+  const x=px2(7),y=TOP+4*GAP;
   ctx.fillStyle='rgba(255,255,255,.4)';
   [[18,-26,8],[34,-48,6],[46,-68,4]].forEach(([dx,dy,r])=>{ctx.globalAlpha=.4;ctx.beginPath();ctx.arc(x-dx,y+dy,r,0,7);ctx.fill();});
   ctx.globalAlpha=1;
@@ -71,6 +112,6 @@ ctx.textAlign='left';ctx.fillText('THE PEARL',84,132);
 ctx.fillStyle='#5c6a76';ctx.font='italic 25px Georgia,serif';
 ctx.fillText('the tide drops the pearl',86,170);
 ctx.fillStyle='#1e6f8e';ctx.font='600 17px system-ui';
-ctx.fillText('twelve bounces · one Bitcoin block · zero secrets',86,202);
+ctx.fillText('five notches · buzzers, bumpers, the Pearl Run ×10 · zero secrets',86,202);
 </script>
 </body></html>

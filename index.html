@@ -4,25 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Pearl — the tide drops the pearl</title>
-<meta name="description" content="Drop a pearl through the coral pins — the next Bitcoin block writes every bounce. Three rides, one honest edge, verifiable by anyone forever.">
+<meta name="description" content="Choose your notch, drop the pearl: wall buzzers, twin bumpers, the golden shell — and the Pearl Run. Every bounce written by the next Bitcoin block.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Pearl — the tide drops the pearl">
-<meta property="og:description" content="Twelve bounces, thirteen oysters, one seed: the next Bitcoin block writes the whole trajectory. Pick calm, swell or storm — the shapes differ, the edge does not.">
+<meta property="og:description" content="Pick one of five drop notches — the walls buzz, the bumpers pay, the shell glows, and the Pearl Run pays ×10. Twenty-four seed bits from the next Bitcoin block write the whole fall.">
 <meta property="og:url" content="https://tide-games.github.io/pearl/">
 <meta property="og:image" content="https://tide-games.github.io/pearl/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Pearl — the tide drops the pearl">
-<meta name="twitter:description" content="Twelve bounces, one Bitcoin block, zero secrets.">
+<meta name="twitter:description" content="Five notches, twelve rows, one Bitcoin block, zero secrets.">
 <meta name="twitter:image" content="https://tide-games.github.io/pearl/og-image.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='54' r='30' fill='%23f2ecfa'/><circle cx='42' cy='45' r='9' fill='white'/></svg>">
 <style>
   :root{
     --paper:#f7f1e3; --paper-2:#fdf9ee; --ink:#232e38; --ink-soft:#5c6a76;
-    --line:#d9cdb4; --accent:#1e6f8e; --gold:#c9a24b; --gold-soft:#e8d9a8;
-    --coral:#c96a4f; --pearl:#f2ecfa; --danger:#a63d2e;
-    --serif:"Iowan Old Style",Palatino,Georgia,serif;
+    --line:#d9cdb4; --accent:#1e6f8e; --gold:#c9a24b; --coral:#c96a4f;
+    --danger:#a63d2e; --serif:"Iowan Old Style",Palatino,Georgia,serif;
   }
   *{box-sizing:border-box} html,body{margin:0}
   body{
@@ -31,7 +30,6 @@
     min-height:100vh; padding-bottom:44px;
   }
   .wrap{max-width:1060px;margin:0 auto;padding:14px 16px 40px}
-  /* ---------- header ---------- */
   header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:6px 2px 10px}
   h1{margin:0;font:800 30px/1 var(--serif);letter-spacing:.04em}
   h1 .orb{display:inline-block;width:22px;height:22px;border-radius:50%;
@@ -46,44 +44,35 @@
   .chip.purse{border-color:#dcbf74;background:#fdf8ea}
   button.chip{cursor:pointer;font:inherit;font-weight:600;color:var(--ink)}
   button.chip:hover{border-color:var(--accent)}
-  .ic{width:1em;height:1em;vertical-align:-.125em;fill:currentColor}
-  /* ---------- board ---------- */
   .board-frame{position:relative;border-radius:16px;overflow:hidden;
     border:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(35,46,56,.5);background:#0e3a4d}
-  canvas{display:block;width:100%;height:auto}
-  /* ---------- layout ---------- */
+  canvas{display:block;width:100%;height:auto;cursor:pointer}
   .cols{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-top:14px}
   @media(max-width:900px){.cols{grid-template-columns:1fr}}
   .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;
     box-shadow:0 1px 3px rgba(35,46,56,.07)}
   .card h2{margin:0 0 10px;font:700 13px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
   .card h2 .right{float:right;font-weight:600;letter-spacing:0;text-transform:none}
-  /* ride picker */
-  .rides{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .ride{border:1.5px solid var(--line);border-radius:11px;padding:9px 10px;cursor:pointer;background:#fff;text-align:left}
-  .ride:hover{border-color:var(--accent)}
-  .ride.on{border-color:var(--accent);background:#eef6fa}
-  .ride b{display:block;font-size:14px}
-  .ride small{color:var(--ink-soft);display:block;margin-top:2px;font-variant-numeric:tabular-nums}
-  /* slip */
   .mode{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
   .mode button{flex:1;font:600 14px system-ui;padding:8px 0;border:0;background:#fff;cursor:pointer;color:var(--ink-soft)}
   .mode button.on{background:var(--accent);color:#fff}
+  .notchline{display:flex;justify-content:space-between;align-items:center;background:#eef6fa;
+    border:1px solid #bcd7e4;border-radius:9px;padding:8px 11px;font-size:13.5px;margin-bottom:10px}
+  .notchline b{font-variant-numeric:tabular-nums}
   .stakebar{display:flex;align-items:center;gap:8px;margin:8px 0 8px}
   .stakebar label{font:700 12px system-ui;letter-spacing:.1em;color:var(--ink-soft)}
   .stakebar input{flex:1;font:700 18px/1 system-ui;text-align:right;padding:9px 12px;border:1px solid var(--line);border-radius:10px;min-width:0}
   .quick{display:flex;gap:7px;margin-bottom:10px}
   .quick button{flex:1;font:600 13px system-ui;padding:7px 0;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer}
   .quick button:hover{border-color:var(--accent)}
-  .maxline{display:flex;justify-content:space-between;background:#fdf8ea;border:1px solid #eadfc0;
+  .dream{display:flex;justify-content:space-between;background:#fdf8ea;border:1px solid #eadfc0;
     border-radius:9px;padding:8px 11px;font-size:13.5px;margin-bottom:10px}
-  .maxline b{font-variant-numeric:tabular-nums}
+  .dream b{font-variant-numeric:tabular-nums;color:#8a6508}
   #drop-btn{width:100%;font:700 16px system-ui;padding:12px 0;border:0;border-radius:11px;cursor:pointer;
     color:#fff;background:linear-gradient(#2a86a8,var(--accent));box-shadow:0 6px 14px -7px rgba(30,111,142,.6)}
   #drop-btn:hover{filter:brightness(1.06)}
   #drop-btn[disabled]{opacity:.55;cursor:default;filter:none}
   .modenote{color:var(--ink-soft);font-size:12.5px;margin-top:8px;line-height:1.5}
-  /* log */
   table{border-collapse:collapse;width:100%;font-size:13.5px}
   th{font:700 11px system-ui;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:4px 8px}
   td{padding:6px 8px;border-top:1px solid #f0e9d8;font-variant-numeric:tabular-nums}
@@ -92,12 +81,11 @@
   .tag{font-size:11px;padding:1.5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft)}
   footer{margin-top:18px;color:var(--ink-soft);font-size:13px;line-height:1.6}
   footer a{color:var(--accent)}
-  /* banner */
   #banner{position:absolute;left:0;right:0;top:12px;display:none;align-items:flex-start;justify-content:center;pointer-events:none}
   #banner .inner{background:rgba(247,241,227,.96);border:1px solid var(--line);border-radius:14px;
-    padding:16px 26px;text-align:center;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);max-width:80%}
-  #banner .head{font:800 22px var(--serif)}
-  #banner .sub{color:var(--ink-soft);margin-top:4px;font-size:14px}
+    padding:14px 24px;text-align:center;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);max-width:80%}
+  #banner .head{font:800 21px var(--serif)}
+  #banner .sub{color:var(--ink-soft);margin-top:3px;font-size:14px}
 </style>
 </head>
 <body>
@@ -112,7 +100,7 @@
   </header>
 
   <div class="board-frame">
-    <canvas id="sea" width="1028" height="560"></canvas>
+    <canvas id="sea" width="1028" height="600"></canvas>
     <div id="banner"><div class="inner"><div class="head" id="banner-head"></div><div class="sub" id="banner-sub"></div></div></div>
   </div>
 
@@ -120,7 +108,7 @@
     <div class="card">
       <h2>The Log <span class="right" id="drop-count"></span></h2>
       <table>
-        <thead><tr><th>Drop</th><th>Ride</th><th>Stake</th><th>Slot</th><th>Bonus</th><th>Net</th><th>Proof</th></tr></thead>
+        <thead><tr><th>Drop</th><th>Notch</th><th>Stake</th><th>Fall</th><th>Net</th><th>Proof</th></tr></thead>
         <tbody id="log-body"></tbody>
       </table>
     </div>
@@ -130,317 +118,415 @@
         <button id="m-practice" class="on">◉ Practice</button>
         <button id="m-tide">〜 The Tide</button>
       </div>
-      <div class="rides" id="rides"></div>
-      <div class="stakebar"><label>STAKE</label><input id="stake" type="number" min="10" step="1" value="50" inputmode="numeric"></div>
+      <div class="notchline"><div><div id="notch-name" style="font-weight:700">—</div><div id="notch-note" style="font-size:12px;color:var(--ink-soft)"></div></div></div>
+      <div class="stakebar"><label>STAKE <span style="font-weight:500;opacity:.6">min 20</span></label><input id="stake" type="number" min="20" step="1" value="100" inputmode="numeric"></div>
       <div class="quick" id="quick">
-        <button data-q="10">10</button><button data-q="50">50</button><button data-q="100">100</button><button data-q="max">Max</button>
+        <button data-q="20">20</button><button data-q="100">100</button><button data-q="500">500</button><button data-q="max">Max</button>
       </div>
-      <div class="maxline"><span>Best drop pays</span><b id="max-pay">—</b></div>
+      <div class="dream"><span>✨ The Pearl Run pays</span><b id="dream-pay">—</b></div>
       <button id="drop-btn">Drop the pearl</button>
-      <p class="modenote" id="modenote">Practice drops are seeded locally and fall at once — pure fun, not provable.</p>
+      <p class="modenote" id="modenote"></p>
     </div>
   </div>
 
   <footer>
-    <p>Twelve bounces are twelve bits of <code>sha256(blockHash | mark)</code> — the seed <i>is</i> the trajectory,
-    and the fall you watch replays it bit for bit. Three rides, one edge (≈3%), pinned by enumerating all 4,096
-    paths in <a href="pearl.js">pearl.js</a> · <a href="tests.js">tests</a> ·
+    <p>Pick a notch — that's the strategy. Twenty-four seed bits of <code>sha256(blockHash | mark)</code>
+    write every step: left ¼, straight ½, right ¼. Wall buzzers pay ×0.05 a clunk, the bumpers ×0.4,
+    the shell ×0.15 — and shell → bumper → dead-centre in one fall is <b>the Pearl Run, ×10</b>
+    (about 1 in 2,700 from the middle). Every notch faces the same ≈3% edge — solved exactly, enumerated
+    in <a href="tests.js">tests</a> over the maths in <a href="pearl.js">pearl.js</a> ·
     a <a href="https://tide-games.github.io/">tide-games</a> boat.</p>
   </footer>
 </div>
 
 <script type="module">
-import { ROWS, SLOTS, BONUS_PEGS, BONUS_PAY, TABLES, TABLE_KEYS, pathFromSeed, trackOf, settle, quote }
-  from './pearl.js';
+import { COLS, ROWS, DROPS, BUMPERS, SHELL, WALL_PAY, BUMPER_PAY, SHELL_PAY,
+  RUN_PAY, RUN_SLOT, SLOT_PAY, settle, maxPayout } from './pearl.js';
 
 /* ================================================================ state */
 const LS = { purse:'pearl-purse', log:'pearl-log', drops:'pearl-drops', sound:'pearl-sound',
-             pending:'pearl-pending', ride:'pearl-ride' };
-const load = (k,d)=>{ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?d:v; }catch{ return d; } };
-const save = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
-const $ = (id)=>document.getElementById(id);
-const MEMPOOL = 'https://mempool.space/testnet4/api';
-const fmt = (n)=>Number(n).toLocaleString('en-US');
-const MINUS = '−';
+             pending:'pearl-pending', notch:'pearl-notch' };
+const load=(k,d)=>{ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?d:v; }catch{ return d; } };
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const $=(id)=>document.getElementById(id);
+const MEMPOOL='https://mempool.space/testnet4/api';
+const fmt=(n)=>Number(n).toLocaleString('en-US');
+const MINUS='−';
 
-let purse = load(LS.purse, 1000);
-let drops = load(LS.drops, 0);
-let log = load(LS.log, []);
-let pending = load(LS.pending, null); // {height, mark, ride, stake, placedAt}
-let ride = load(LS.ride, 'calm');
-let soundOn = load(LS.sound, true);
-let mode = 'practice';
-let dropping = false;
+let purse=load(LS.purse,1000);
+let drops=load(LS.drops,0);
+let log=load(LS.log,[]);
+let pending=load(LS.pending,null); // {height, mark, notch, stake, placedAt}
+let notch=load(LS.notch,6);
+if(!DROPS.includes(notch)) notch=6;
+let soundOn=load(LS.sound,true);
+let mode='practice';
+let dropping=false;
 
-const randHex = (n)=>Array.from(crypto.getRandomValues(new Uint8Array(n)),(b)=>b.toString(16).padStart(2,'0')).join('');
+const randHex=(n)=>Array.from(crypto.getRandomValues(new Uint8Array(n)),(b)=>b.toString(16).padStart(2,'0')).join('');
 async function sha256hex(s){
-  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
   return Array.from(new Uint8Array(d),(b)=>b.toString(16).padStart(2,'0')).join('');
 }
 
 /* ================================================================ sound */
 let _ac=null; const ac=()=>_ac||(_ac=new (window.AudioContext||window.webkitAudioContext)());
 function env(g,t,a,d,v){ g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+a); g.gain.exponentialRampToValueAtTime(0.001,t+a+d); }
-function plink(freq){
+function tone(freq,vol=0.12,dur=0.1,type='sine'){
   if(!soundOn) return; const c=ac(),t=c.currentTime;
-  const o=c.createOscillator(),g=c.createGain(); o.type='sine'; o.frequency.value=freq;
-  o.connect(g); g.connect(c.destination); env(g,t,0.004,0.09,0.12); o.start(t); o.stop(t+0.12);
+  const o=c.createOscillator(),g=c.createGain(); o.type=type; o.frequency.value=freq;
+  o.connect(g); g.connect(c.destination); env(g,t,0.004,dur,vol); o.start(t); o.stop(t+dur+0.05);
 }
-function shimmer(){
-  if(!soundOn) return; const c=ac(),t=c.currentTime;
-  [880,1108,1318].forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
-    o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(c.destination);
-    env(g,t+i*0.06,0.01,0.35,0.09); o.start(t+i*0.06); o.stop(t+i*0.06+0.4); });
-}
-function thud(){
-  if(!soundOn) return; const c=ac(),t=c.currentTime;
+function kaching(){ if(!soundOn) return; tone(660,0.16,0.12,'square'); setTimeout(()=>tone(990,0.14,0.2,'square'),70); }
+function shimmer(){ if(!soundOn) return; [880,1108,1318].forEach((f,i)=>setTimeout(()=>tone(f,0.09,0.35),i*60)); }
+function clunk(){ tone(200,0.16,0.09,'triangle'); }
+function thud(){ if(!soundOn) return; const c=ac(),t=c.currentTime;
   const o=c.createOscillator(),g=c.createGain(); o.type='triangle';
-  o.frequency.setValueAtTime(180,t); o.frequency.exponentialRampToValueAtTime(70,t+0.18);
-  o.connect(g); g.connect(c.destination); env(g,t,0.005,0.2,0.25); o.start(t); o.stop(t+0.25);
-}
+  o.frequency.setValueAtTime(170,t); o.frequency.exponentialRampToValueAtTime(65,t+0.18);
+  o.connect(g); g.connect(c.destination); env(g,t,0.005,0.2,0.25); o.start(t); o.stop(t+0.25); }
+function fanfare(){ if(!soundOn) return; [523,659,784,1047,1318].forEach((f,i)=>setTimeout(()=>tone(f,0.14,0.3),i*90)); }
 
-/* ================================================================ board geometry */
+/* ================================================================ geometry */
 const cv=$('sea'), ctx=cv.getContext('2d');
-const W=1028, H=560;
-const TOP=74;                 // first pin row y
-const ROWGAP=(H-TOP-96)/ROWS; // vertical gap between rows
-const PITCH=64;               // horizontal pitch between adjacent positions
-const CX=W/2;
-// pearl position at track pos p after r rows: x = CX + (p - r/2)*PITCH
-const posX=(r,p)=>CX+(p-r/2)*PITCH;
-const rowY=(r)=>TOP+r*ROWGAP;
-const SLOTY=H-72;
+const W=1028,H=600;
+const RAILX=84;                       // playfield inset (rails live here)
+const PITCH=(W-2*RAILX)/(COLS-1);     // x-distance between positions
+const TOPY=96;                        // notch row
+const SLOTY=H-78;
+const ROWGAP=(SLOTY-30-TOPY)/ROWS;
+const px=(p)=>RAILX+p*PITCH;
+const py=(r)=>TOPY+r*ROWGAP;          // pearl y after r rows
 
-function isBonus(r,p){ return BONUS_PEGS.some(b=>b.row===r&&b.pos===p); }
+let anim=null;      // {result, t0, landed}
+let floaters=[];    // {text,x,y,color,t0}
+let flashes={};     // key -> t0 : 'wallL','wallR','bumper3','bumper9','shell', peg r:p
+let selGlow=0;
+let pulse=0;      // pearl scale pulse t0
+let shake=0;      // board shake t0
+let burst=null;   // {x,y,t0} gold particle burst (the Run)
+let goldflash=0;  // full-board gold wash t0
 
-/* pearl animation state */
-let anim=null; // {path, track, t0, dur, ride, stake, result, landed}
-let floaters=[]; // {text, x, y, color, t0} — rise and fade
-let pegKnocks={}; // "r:p" -> t0 of last strike, for the wobble
+const NOTCH_LBL={2:'W2',4:'W1',6:'C',8:'E1',10:'E2'};
+const NOTCH_NAMES={2:'W2 · West wall-runner',4:'W1 · West bumper line',6:'C · Centre — the shell & the Run',8:'E1 · East bumper line',10:'E2 · East wall-runner'};
+const NOTCH_NOTES={2:'clatter for buzzer pays',4:'farms the west bumper',6:'the dream lives here',8:'farms the east bumper',10:'clatter for buzzer pays'};
 
 function drawBoard(now){
   ctx.clearRect(0,0,W,H);
+  ctx.save();
+  if(shake&&now-shake<220){ const k=1-(now-shake)/220; ctx.translate(Math.sin(now/9)*4*k, Math.cos(now/11)*3*k); }
   // water
   let g=ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,'#7db4c4'); g.addColorStop(0.5,'#4d8aa0'); g.addColorStop(1,'#1d5d77');
+  g.addColorStop(0,'#77b0c1'); g.addColorStop(0.5,'#48869d'); g.addColorStop(1,'#1b5a74');
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-  // light shafts
-  ctx.save(); ctx.globalAlpha=0.08; ctx.fillStyle='#fff';
-  for(let i=0;i<4;i++){ ctx.beginPath();
-    const x=140+i*240; ctx.moveTo(x,0); ctx.lineTo(x+70,0); ctx.lineTo(x-40,H); ctx.lineTo(x-110,H); ctx.closePath(); ctx.fill(); }
+  ctx.save(); ctx.globalAlpha=0.07; ctx.fillStyle='#fff';
+  for(let i=0;i<4;i++){ const x=170+i*240; ctx.beginPath();
+    ctx.moveTo(x,0); ctx.lineTo(x+66,0); ctx.lineTo(x-44,H); ctx.lineTo(x-110,H); ctx.closePath(); ctx.fill(); }
   ctx.restore();
-  // drifting motes
-  ctx.fillStyle='rgba(255,255,255,.25)';
-  for(let i=0;i<26;i++){
-    const x=(i*173+((now||0)*0.01))%W, y=(i*97)%H;
-    ctx.fillRect(x, y, 2, 2);
-  }
-  // kelp in the margins — the board breathes
-  ctx.save(); ctx.lineCap='round';
-  const kelps=[[70,3],[150,4],[900+CX-514,3],[985+CX-514,5]];
-  kelps.forEach(([kx,fronds],ki)=>{
-    for(let f=0;f<fronds;f++){
-      ctx.strokeStyle=`rgba(46,110,90,${0.35-f*0.05})`;
-      ctx.lineWidth=7-f;
-      ctx.beginPath();
-      const x0=kx+f*10-fronds*4;
-      ctx.moveTo(x0,H-40);
-      for(let s=1;s<=6;s++){
-        const yy=H-40-s*((H-160)/6);
-        const sway=Math.sin(((now||0)/1400)+ki+f+s*0.7)*(4+s*2.4);
-        ctx.quadraticCurveTo(x0+sway*0.6, yy+30, x0+sway, yy);
-      }
-      ctx.stroke();
-    }
+  ctx.fillStyle='rgba(255,255,255,.22)';
+  for(let i=0;i<24;i++) ctx.fillRect((i*173+(now*0.008))%W,(i*97)%H,2,2);
+  // vignette pulls the eye to the field
+  const vg=ctx.createRadialGradient(W/2,H*0.45,H*0.35,W/2,H*0.45,H*0.95);
+  vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(6,26,36,.35)');
+  ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+  // kelp inside the rails
+  ctx.lineCap='round';
+  [[RAILX+16,2,0],[W-RAILX-16,2,3]].forEach(([kx,fr,ph])=>{
+    for(let f=0;f<fr;f++){ ctx.strokeStyle=`rgba(46,110,90,${0.3-f*0.08})`; ctx.lineWidth=6-f*2;
+      ctx.beginPath(); const x0=kx+f*8-4; ctx.moveTo(x0,SLOTY);
+      for(let sg=1;sg<=5;sg++){ const yy=SLOTY-sg*((SLOTY-TOPY)/5.5);
+        const sw=Math.sin(now/1500+ph+f+sg*0.8)*(3+sg*2.2);
+        ctx.quadraticCurveTo(x0+sw*0.6,yy+26,x0+sw,yy); }
+      ctx.stroke(); }
   });
-  ctx.restore();
-  // pins: row r has r+1 landing positions ABOVE it; draw pegs the pearl bounces on —
-  // peg grid: row r (0..ROWS-1) pegs sit between positions: at x of (r, p±?) — draw
-  // pegs at every position of row r+? Simplest true-to-path: peg the pearl strikes
-  // at row r sits at (rowY(r), posX(r, track[r])) — draw the full triangle:
-  for(let r=0;r<ROWS;r++){
-    for(let p=0;p<=r;p++){
-      const x=posX(r,p), y=rowY(r);
-      const bonus=isBonus(r,p);
-      // struck pegs wobble for a beat — the board answers the pearl
-      const k=pegKnocks[r+':'+p];
-      const knock=k&&now-k<260 ? 1+0.5*Math.sin(((now-k)/260)*Math.PI) : 1;
-      if(bonus){
-        // a golden shell
-        ctx.fillStyle='#e8c886';
-        ctx.beginPath(); ctx.arc(x,y,9*knock,0,7); ctx.fill();
-        ctx.strokeStyle='#8a6508'; ctx.lineWidth=1.5; ctx.stroke();
-        ctx.fillStyle='#8a6508';
-        ctx.beginPath(); ctx.arc(x,y,3*knock,0,7); ctx.fill();
-      }else{
-        ctx.fillStyle=knock>1?'#f0b49a':'#d98e75';
-        ctx.beginPath(); ctx.arc(x,y,5.5*knock,0,7); ctx.fill();
-        ctx.strokeStyle='rgba(90,30,20,.5)'; ctx.lineWidth=1; ctx.stroke();
-      }
+
+  // coral silhouettes in the outer columns
+  ctx.fillStyle='rgba(20,55,72,.55)';
+  for(const [cx0,fl] of [[RAILX-58,1],[W-RAILX+58,-1]]){
+    ctx.beginPath();
+    ctx.moveTo(cx0-20*fl,SLOTY+10);
+    ctx.quadraticCurveTo(cx0-14*fl,SLOTY-70,cx0-22*fl,SLOTY-120);
+    ctx.quadraticCurveTo(cx0-2*fl,SLOTY-100,cx0+2*fl,SLOTY-150);
+    ctx.quadraticCurveTo(cx0+10*fl,SLOTY-96,cx0+16*fl,SLOTY-60);
+    ctx.quadraticCurveTo(cx0+22*fl,SLOTY-20,cx0+24*fl,SLOTY+10);
+    ctx.closePath(); ctx.fill();
+  }
+  // ---- rails (the wall buzzers)
+  for(const side of ['L','R']){
+    const x=side==='L'?RAILX-34:W-RAILX+34;
+    const hit=flashes['wall'+side], glow=hit&&now-hit<300?1-(now-hit)/300:0;
+    ctx.fillStyle='#173f52';
+    ctx.fillRect(side==='L'?x-16:x-14, TOPY-40, 30, SLOTY-TOPY+46);
+    // buzzer studs
+    for(let r=1;r<=ROWS;r++){
+      const y=py(r)-ROWGAP/2;
+      ctx.fillStyle=glow?`rgba(255,214,120,${0.35+0.65*glow})`:'#3f7d95';
+      ctx.beginPath(); ctx.arc(side==='L'?x+8:x-8,y,5,0,7); ctx.fill();
+      ctx.strokeStyle='rgba(10,30,40,.6)'; ctx.lineWidth=1; ctx.stroke();
+    }
+    if(glow){ ctx.fillStyle=`rgba(255,214,120,${0.12*glow})`;
+      ctx.fillRect(side==='L'?x-16:x-14, TOPY-40, 30, SLOTY-TOPY+46); }
+  }
+
+  // ---- the header rail the notches hang from
+  ctx.fillStyle='#173f52';
+  ctx.fillRect(RAILX-50,TOPY-52,W-2*RAILX+100,10);
+  ctx.fillStyle='rgba(255,255,255,.08)';
+  ctx.fillRect(RAILX-50,TOPY-52,W-2*RAILX+100,3);
+  // ---- drop notches
+  for(const d of DROPS){
+    const x=px(d), sel=d===notch;
+    const pulse=sel?0.5+0.5*Math.sin(now/300):0;
+    ctx.fillStyle=sel?`rgba(255,240,200,${0.85+0.15*pulse})`:'rgba(190,215,225,.9)';
+    ctx.beginPath();
+    ctx.moveTo(x-16,TOPY-44); ctx.lineTo(x+16,TOPY-44); ctx.lineTo(x+9,TOPY-24); ctx.lineTo(x-9,TOPY-24);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle=sel?'#c9a24b':'rgba(20,50,65,.75)'; ctx.lineWidth=sel?2.5:1.5; ctx.stroke();
+    if(sel){
+      ctx.fillStyle='#fff8ea'; ctx.font='700 11px system-ui'; ctx.textAlign='center';
+      ctx.fillText('DROP',x,TOPY-52);
     }
   }
-  // seabed — the oysters need ground under them
-  const sb=ctx.createLinearGradient(0,SLOTY-6,0,H);
-  sb.addColorStop(0,'rgba(232,215,175,0)'); sb.addColorStop(0.25,'#cdb98e'); sb.addColorStop(1,'#b9a276');
-  ctx.fillStyle=sb; ctx.fillRect(0,SLOTY-6,W,H-SLOTY+6);
-  ctx.fillStyle='rgba(120,100,60,.18)';
-  for(let i=0;i<40;i++) ctx.fillRect((i*89+13)%W, SLOTY+8+((i*37)%(H-SLOTY-14)), 2, 2);
 
-  // slots: 13 oysters
-  const m=TABLES[ride];
-  for(let k=0;k<SLOTS;k++){
-    const x=posX(ROWS,k);
-    const hot=Math.max(...m)===m[k];
-    const opened = anim && anim.landed && anim.track[ROWS]===k;
-    // shell
-    ctx.fillStyle=hot?'#e8c886':'#d3c4a8';
-    ctx.strokeStyle='rgba(60,45,25,.55)'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.ellipse(x,SLOTY+16,26,17,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+  // ---- pegs: staggered grid between positions
+  let pearlPos=null;
+  if(anim&&!anim.landed){ const P=pearlAt(now); pearlPos=P; }
+  for(let r=1;r<=ROWS;r++){
+    const y=py(r)-ROWGAP/2;
+    const off=(r%2)?0.5:0;
+    for(let c=0;c<COLS-((r%2)?1:0);c++){
+      const x=px(c+off);
+      if(x<RAILX-4||x>W-RAILX+4) continue;
+      const feat=(r===SHELL.row||r===BUMPERS[0].row);
+      // pegs shiver as the pearl passes them — the board is alive to it
+      let wob=0;
+      if(pearlPos){ const dx=x-pearlPos.x, dy=y-pearlPos.y, d2=dx*dx+dy*dy;
+        if(d2<2600) wob=(1-d2/2600)*Math.sin(now/28)*2.2; }
+      ctx.fillStyle=feat?'#e4a77f':'#d98e75';
+      ctx.beginPath(); ctx.arc(x+wob,y,4.5+(wob?0.6:0),0,7); ctx.fill();
+      ctx.strokeStyle=feat?'rgba(120,60,20,.6)':'rgba(90,30,20,.45)'; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+
+  // ---- the shell (row 4, centre)
+  {
+    const x=px(SHELL.pos), y=py(SHELL.row);
+    const hit=flashes.shell, glow=hit&&now-hit<600?1-(now-hit)/600:0;
+    ctx.save(); ctx.translate(x,y);
+    { const rg=ctx.createRadialGradient(0,0,3,0,0,44);
+      rg.addColorStop(0,`rgba(255,230,150,${0.22+0.6*glow})`); rg.addColorStop(1,'rgba(255,230,150,0)');
+      ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(0,0,44,0,7); ctx.fill(); }
+    ctx.fillStyle='#e8c886'; ctx.strokeStyle='#8a6508'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.ellipse(0,3,20,15,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    for(let i=-2;i<=2;i++){ ctx.beginPath(); ctx.moveTo(0,3); ctx.lineTo(i*8,-11); ctx.strokeStyle='rgba(138,101,8,.6)'; ctx.lineWidth=1.4; ctx.stroke(); }
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,-2,4.5,0,7); ctx.fill();
+    ctx.restore();
+  }
+
+  // ---- the bumpers (row 7, pos 3 & 9)
+  for(const b of BUMPERS){
+    const x=px(b.pos), y=py(b.row);
+    const hit=flashes['bumper'+b.pos], glow=hit&&now-hit<500?1-(now-hit)/500:0;
+    const r=26+glow*8;
+    { const rg=ctx.createRadialGradient(x,y,6,x,y,52);
+      rg.addColorStop(0,`rgba(255,180,120,${0.18+0.5*glow})`); rg.addColorStop(1,'rgba(255,180,120,0)');
+      ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,52,0,7); ctx.fill(); }
+    const bg=ctx.createRadialGradient(x-4,y-5,2,x,y,r);
+    bg.addColorStop(0,'#ffcf9a'); bg.addColorStop(0.6,'#e8935f'); bg.addColorStop(1,'#b35a37');
+    ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+    ctx.strokeStyle='#6d2e18'; ctx.lineWidth=2; ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,y,r-5,0,7); ctx.stroke();
+    ctx.fillStyle='#5c2412'; ctx.font='800 11px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font='800 14px system-ui'; ctx.fillText('×.4',x,y+1); ctx.textBaseline='alphabetic';
+  }
+
+  // ---- seabed + oysters
+  const sb=ctx.createLinearGradient(0,SLOTY-8,0,H);
+  sb.addColorStop(0,'rgba(232,215,175,0)'); sb.addColorStop(0.25,'#cdb98e'); sb.addColorStop(1,'#b9a276');
+  ctx.fillStyle=sb; ctx.fillRect(0,SLOTY-8,W,H-SLOTY+8);
+  for(let k=0;k<COLS;k++){
+    const x=px(k);
+    const centre=k===RUN_SLOT;
+    const opened=anim&&anim.landed&&anim.result.slot===k;
+    ctx.fillStyle=centre?'#e8c886':'#d3c4a8';
+    ctx.strokeStyle='rgba(60,45,25,.55)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.ellipse(x,SLOTY+14,PITCH*0.42,15,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.fillStyle='rgba(255,255,255,.35)';
-    ctx.beginPath(); ctx.ellipse(x,SLOTY+13,18,9,0,Math.PI,0); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x,SLOTY+11,PITCH*0.3,8,0,Math.PI,0); ctx.closePath(); ctx.fill();
     if(opened){
-      // the top shell swings open behind the landed pearl
-      ctx.save(); ctx.translate(x-24,SLOTY+15); ctx.rotate(-0.9);
-      ctx.fillStyle=hot?'#f0d6a2':'#e0d3b8';
-      ctx.strokeStyle='rgba(60,45,25,.5)'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.ellipse(24,0,25,15,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.save(); ctx.translate(x-PITCH*0.36,SLOTY+13); ctx.rotate(-0.85);
+      ctx.fillStyle=centre?'#f0d6a2':'#e0d3b8'; ctx.strokeStyle='rgba(60,45,25,.5)'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.ellipse(PITCH*0.36,0,PITCH*0.4,13,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
       ctx.restore();
     }
-    // multiplier — light plate so the numbers read on deep water
-    ctx.font='700 13px system-ui'; ctx.textAlign='center';
-    ctx.fillStyle=hot?'#8a6508':'#3d4c59';
-    ctx.fillText('×'+m[k], x, SLOTY+44);
-    if(hot){ ctx.strokeStyle='rgba(255,217,122,.5)'; ctx.lineWidth=1;
-      ctx.strokeText('×'+m[k], x, SLOTY+44); }
+    ctx.fillStyle=centre?'#8a6508':'#5d6b78';
+    ctx.font=centre?'800 12.5px system-ui':'600 10.5px system-ui'; ctx.textAlign='center';
+    ctx.fillText('×'+SLOT_PAY[k],x,SLOTY+38);
   }
-  // floaters (+N texts drifting up)
-  if(now){
-    floaters=floaters.filter(f=>now-f.t0<900);
-    for(const f of floaters){
-      const e=(now-f.t0)/900;
-      ctx.globalAlpha=1-e;
-      ctx.fillStyle=f.color; ctx.font='800 15px system-ui'; ctx.textAlign='center';
-      ctx.fillText(f.text, f.x, f.y-e*34);
-      ctx.globalAlpha=1;
-    }
-  }
-  // the pearl
+
+  // ---- the pearl
   if(anim){
-    const {x,y,rowHit}=pearlAt(now);
-    // sparkle trail
+    const P=pearlAt(now);
     ctx.fillStyle='rgba(255,255,255,.5)';
     for(let i=1;i<=4;i++){
-      const p2=pearlAt(now-i*40);
-      ctx.globalAlpha=0.5-(i*0.11);
-      ctx.beginPath(); ctx.arc(p2.x,p2.y,7-i,0,7); ctx.fill();
+      const p2=pearlAt(now-i*36);
+      ctx.globalAlpha=0.45-(i*0.1);
+      ctx.beginPath(); ctx.arc(p2.x,p2.y,8-i,0,7); ctx.fill();
     }
     ctx.globalAlpha=1;
-    const pg=ctx.createRadialGradient(x-3,y-4,1,x,y,10);
-    pg.addColorStop(0,'#fff'); pg.addColorStop(0.6,'#efe8f8'); pg.addColorStop(1,'#c9bfe0');
-    ctx.fillStyle=pg;
-    ctx.beginPath(); ctx.arc(x,y,10,0,7); ctx.fill();
+    const pr=10*(pulse&&now-pulse<240?1+0.45*Math.sin(((now-pulse)/240)*Math.PI):1);
+    const pg=ctx.createRadialGradient(P.x-3,P.y-4,1,P.x,P.y,pr+1);
+    pg.addColorStop(0,'#fff'); pg.addColorStop(0.6,'#efe8f8'); pg.addColorStop(1,'#c3b8dd');
+    ctx.fillStyle=pg; ctx.beginPath(); ctx.arc(P.x,P.y,pr,0,7); ctx.fill();
     ctx.strokeStyle='rgba(60,50,80,.4)'; ctx.lineWidth=1; ctx.stroke();
-    if(rowHit!=null){ // flash the struck peg
-      const p=anim.track[rowHit];
-      ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.arc(posX(rowHit,p),rowY(rowHit),11,0,7); ctx.stroke();
+  }
+
+  // ---- the Run's celebration: gold burst + wash
+  if(burst&&now-burst.t0<1100){
+    const e=(now-burst.t0)/1100;
+    for(let i=0;i<26;i++){
+      const a=(i/26)*Math.PI*2+i*0.6;
+      const sp=90+((i*37)%60);
+      const bx=burst.x+Math.cos(a)*sp*e, by=burst.y+Math.sin(a)*sp*e-60*e*(1-e)*2;
+      ctx.globalAlpha=(1-e)*0.9;
+      ctx.fillStyle=i%3?'#ffd97a':'#fff3c9';
+      ctx.beginPath(); ctx.arc(bx,by,3.4-2*e,0,7); ctx.fill();
     }
+    ctx.globalAlpha=1;
+  }
+  if(goldflash&&now-goldflash<450){
+    ctx.fillStyle=`rgba(255,214,110,${0.16*(1-(now-goldflash)/450)})`;
+    ctx.fillRect(0,0,W,H);
+  }
+  ctx.restore();
+  // ---- floaters (outside the shake so they stay legible)
+  floaters=floaters.filter(f=>now-f.t0<950);
+  for(const f of floaters){
+    const e=(now-f.t0)/950;
+    ctx.globalAlpha=1-e;
+    ctx.fillStyle=f.color; ctx.font=(f.big?'800 20px':'800 15px')+' system-ui'; ctx.textAlign='center';
+    ctx.fillText(f.text,f.x,f.y-e*36);
+    ctx.globalAlpha=1;
   }
 }
 
-// choreographed fall: wall-clock, a HANG of anticipation, then one row per
-// STEP ms with a real bounce arc
-const STEP=330, HANG=420;
+/* fall choreography: HANG then one row per STEP ms */
+const HANG=430;
+// gravity: each row falls faster than the last (420ms -> 250ms, eased)
+const ROWMS=Array.from({length:ROWS},(_,r)=>Math.round(420-170*Math.pow(r/(ROWS-1),0.7)));
+const CUM=[0]; for(const ms of ROWMS) CUM.push(CUM[CUM.length-1]+ms);
+const FALLMS=CUM[ROWS];
+function rowAt(e){ let r=0; while(r<ROWS&&e>=CUM[r+1]) r++; return r; }
 function pearlAt(now){
-  const e=Math.max(0, now-anim.t0)-HANG;
-  if(e<0){ // hanging at the top, gathering nerve
-    const sway=Math.sin((now-anim.t0)/120)*3;
-    return {x:CX+sway, y:16, rowHit:null};
-  }
-  const r=Math.min(ROWS, Math.floor(e/STEP));
-  const frac=r>=ROWS?1:(e%STEP)/STEP;
-  if(r>=ROWS){
-    // nestled into the open oyster
-    return {x:posX(ROWS,anim.track[ROWS]), y:SLOTY+10, rowHit:null};
-  }
-  const p0=anim.track[r], p1=anim.track[r+1];
-  const x0=posX(r,p0), x1=posX(r+1,p1);
-  const y0=r===0?18:rowY(r-1)+8, y1=rowY(r)+8;
-  // eased fall with a real bounce arc
-  const t=frac<0.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;
-  const x=x0+(x1-x0)*t;
-  const y=y0+(y1-y0)*t - Math.sin(frac*Math.PI)*18;
-  return {x,y,rowHit:frac>0.82?r:null};
+  const t=anim.result.track;
+  const e=Math.max(0,now-anim.t0)-HANG;
+  if(e<0){ const sway=Math.sin((now-anim.t0)/110)*3; return {x:px(anim.result.drop)+sway,y:TOPY-30}; }
+  if(e>=FALLMS) return {x:px(t[ROWS]),y:SLOTY+13};
+  const r=rowAt(e);
+  const frac=(e-CUM[r])/ROWMS[r];
+  const x0=px(t[r]), x1=px(t[r+1]);
+  const y0=r===0?TOPY-24:py(r), y1=py(r+1);
+  const tt=frac<0.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;
+  const bounce=t[r]===t[r+1]?8:16;     // dribbles bounce lower than side-steps
+  return { x:x0+(x1-x0)*tt, y:y0+(y1-y0)*tt-Math.sin(frac*Math.PI)*bounce };
 }
 
-let lastPlinkRow=-1;
+let firedRow=-1;
 function frame(){
   const now=performance.now();
   try{
     drawBoard(now);
-    if(anim && !anim.landed){
+    if(anim&&!anim.landed){
       const e=now-anim.t0-HANG;
-      const r=Math.floor(e/STEP);
-      if(r>lastPlinkRow && r<=ROWS-1 && r>=0){
-        lastPlinkRow=r;
-        const p=anim.track[r];
-        pegKnocks[r+':'+p]=now;
-        plink(isBonus(r,p)?1200:500+r*40);
-        if(isBonus(r,p)){
-          shimmer();
-          floaters.push({ text:'+'+fmt(Math.floor(anim.stake*BONUS_PAY)),
-            x:posX(r,p), y:rowY(r)-14, color:'#ffe9a8', t0:now });
-        }
-      }
-      if(e>=ROWS*STEP+150){ anim.landed=true; landPearl(); }
+      const r=e<0?0:Math.min(ROWS,rowAt(Math.min(e,FALLMS-1))+((e>=FALLMS)?1:1));
+      if(r>firedRow&&r>=1&&r<=ROWS&&e>=CUM[r-0]-1){ }
+      // fire events when a row completes
+      const done=e>=FALLMS?ROWS:rowAt(e);
+      if(done>firedRow&&done>=1){ for(let rr=firedRow+1;rr<=done;rr++) fireRowEvents(rr,now); firedRow=done; }
+      if(e>=FALLMS+260){ anim.landed=true; landPearl(); }
     }
-  }catch(err){ console.log('[pearl] frame died:', err.message); }
+  }catch(err){ console.log('[pearl] frame died:',err.message); }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
+function fireRowEvents(r,now){
+  const R=anim.result, stake=R.stakeVal;
+  tone(430+r*26,0.07,0.07);
+  for(const ev of R.events){
+    if(ev.row!==r) continue;
+    if(ev.type==='wall'){
+      flashes['wall'+(ev.side==='left'?'L':'R')]=now; pulse=now;
+      clunk();
+      floaters.push({text:'+'+fmt(Math.floor(stake*WALL_PAY)),
+        x:ev.side==='left'?RAILX-18:W-RAILX+18, y:py(r)-8, color:'#ffe9a8', t0:now});
+    }
+    if(ev.type==='bumper'){
+      flashes['bumper'+ev.pos]=now; pulse=now; shake=now;
+      kaching();
+      floaters.push({text:'+'+fmt(Math.floor(stake*BUMPER_PAY)),
+        x:px(ev.pos), y:py(r)-26, color:'#ffd9a1', t0:now, big:true});
+    }
+    if(ev.type==='shell'){
+      flashes.shell=now; pulse=now;
+      shimmer();
+      floaters.push({text:'+'+fmt(Math.floor(stake*SHELL_PAY)),
+        x:px(SHELL.pos), y:py(r)-24, color:'#fff6d8', t0:now});
+    }
+  }
+}
+
 /* ================================================================ drop flow */
-async function runDrop({seedHex, rideKey, stake, tideInfo}){
+async function runDrop({seedHex,notchNo,stake,tideInfo}){
   dropping=true; renderControls();
-  // settle the books BEFORE the theatre — a reload mid-fall can never eat a stake
-  const out=settle({table:rideKey, stake, seedHex});
+  const out=settle({drop:notchNo,stake,seedHex});   // books BEFORE theatre
   purse+=out.payout; save(LS.purse,purse);
   drops++; save(LS.drops,drops);
-  log.unshift({ n:drops, ride:rideKey, stake, slot:out.slot, mult:out.multiplier,
-    bonus:out.hits.length, bonusPay:out.bonusPay, delta:out.delta,
-    mode:tideInfo?'tide':'practice', height:tideInfo?.height??null,
-    mark:tideInfo?.mark??null, at:Date.now() });
+  log.unshift({ n:drops, notch:notchNo, stake, slot:out.slot, walls:out.walls,
+    bumpers:out.bumpers, shell:out.shell, run:out.run, delta:out.delta,
+    mode:tideInfo?'tide':'practice', height:tideInfo?.height??null, mark:tideInfo?.mark??null, at:Date.now() });
   log=log.slice(0,60); save(LS.log,log);
-  // theatre
-  const path=pathFromSeed(seedHex);
-  lastPlinkRow=-1;
-  anim={path, track:trackOf(path), t0:performance.now(), ride:rideKey, stake, result:out, landed:false};
+  firedRow=-1; flashes={};
+  anim={result:{...out,stakeVal:stake}, t0:performance.now(), landed:false};
   hideBanner();
   await new Promise((res)=>{ anim._resolve=res; });
 }
 function landPearl(){
   const out=anim.result;
   thud();
-  if(out.payout>0) shimmer();
-  const x=posX(ROWS,anim.track[ROWS]);
+  const x=px(out.slot);
   floaters.push({ text:(out.delta>=0?'+':MINUS)+fmt(Math.abs(out.delta)),
-    x, y:SLOTY-8, color:out.delta>=0?'#b6f0c0':'#ffb9a6', t0:performance.now() });
-  showBanner(out.delta>=0?'A pearl of price!':'The tide gives, the tide takes',
-    `Slot ×${out.multiplier}${out.bonusPay?` · bonus shells +${fmt(out.bonusPay)}`:''} · net <b>${out.delta>=0?'+':MINUS}${fmt(Math.abs(out.delta))}</b>`);
+    x, y:SLOTY-10, color:out.delta>=0?'#b6f0c0':'#ffb9a6', t0:performance.now(), big:out.run });
+  if(out.run){
+    fanfare();
+    burst={x:px(out.slot),y:SLOTY+4,t0:performance.now()};
+    goldflash=performance.now();
+    shake=performance.now();
+    showBanner('✨ THE PEARL RUN ✨',
+      `Shell, bumper, dead centre — <b>×10</b> · net <b>+${fmt(out.delta)}</b>`);
+  }else{
+    if(out.payout>0&&out.delta>=0) shimmer();
+    const bits=[];
+    if(out.walls) bits.push(`${out.walls} buzzer${out.walls>1?'s':''}`);
+    if(out.bumpers) bits.push('bumper');
+    if(out.shell) bits.push('shell');
+    showBanner(out.delta>=0?'The oyster opens':'The tide gives, the tide takes',
+      `Slot ×${SLOT_PAY[out.slot]}${bits.length?' · '+bits.join(' · '):''} · net <b>${out.delta>=0?'+':MINUS}${fmt(Math.abs(out.delta))}</b>`);
+  }
   renderAll();
   dropping=false; renderControls();
   anim._resolve?.();
-  setTimeout(hideBanner, 3500);
+  setTimeout(hideBanner,out.run?6000:3200);
 }
-
-async function practiceDrop(rideKey, stake){
+async function practiceDrop(){
+  const stake=stakeVal();
   purse-=stake; save(LS.purse,purse); renderHeader();
   const seed=await sha256hex('practice|'+randHex(16));
-  await runDrop({seedHex:seed, rideKey, stake});
+  await runDrop({seedHex:seed,notchNo:notch,stake});
 }
 
 /* ---------------- the tide ---------------- */
-let tipHeight=0, tipAt=0;
+let tipHeight=0,tipAt=0;
 async function fetchTip(){
   if(Date.now()-tipAt<20000) return tipHeight;
   const r=await fetch(MEMPOOL+'/blocks/tip/height');
@@ -459,29 +545,30 @@ async function hashAtHeight(h,{cacheOk=false}={}){
   if(cacheOk) blockHashCache[h]=hash;
   return hash;
 }
-async function tideDrop(rideKey, stake){
+async function tideDrop(){
+  const stake=stakeVal();
   const tip=await fetchTip();
-  const height=tip+1;                    // a block nobody has seen
+  const height=tip+1;
   const mark=randHex(16);
   purse-=stake; save(LS.purse,purse);
-  pending={height, mark, ride:rideKey, stake, placedAt:Date.now()};
+  pending={height,mark,notch,stake,placedAt:Date.now()};
   save(LS.pending,pending);
   renderAll();
-  showBanner('The pearl waits on the tide', `It drops on block <b>${fmt(height)}</b> — about ten minutes.`);
+  showBanner('The pearl waits on the tide',`It drops on block <b>${fmt(height)}</b> — about ten minutes.`);
   watchTide();
 }
 let tideTimer=null;
 async function trySettleTide(){
   if(!pending) return false;
   tipAt=0; const tip=await fetchTip();
-  if(tip<pending.height+1) return false;  // 1 conf on top — reorg lesson
+  if(tip<pending.height+1) return false;   // 1 conf on top — the reorg lesson
   const hash=await hashAtHeight(pending.height,{cacheOk:true});
   if(!hash) return false;
   if(tideTimer){ clearInterval(tideTimer); tideTimer=null; }
   const p=pending; pending=null; save(LS.pending,null);
   const seed=await sha256hex(hash+'|'+p.mark);
-  await runDrop({seedHex:seed, rideKey:p.ride, stake:p.stake,
-    tideInfo:{height:p.height, mark:p.mark, blockHash:hash}});
+  await runDrop({seedHex:seed,notchNo:p.notch,stake:p.stake,
+    tideInfo:{height:p.height,mark:p.mark,blockHash:hash}});
   return true;
 }
 function watchTide(){
@@ -492,71 +579,82 @@ function watchTide(){
 
 /* ================================================================ UI */
 function renderHeader(){ $('purse').textContent=fmt(purse); $('sound-ic').textContent=soundOn?'🔊':'🔇'; }
-function renderRides(){
-  const el=$('rides'); el.innerHTML='';
-  const NAMES={calm:'Calm',swell:'Swell',storm:'Storm'};
-  const BLURB={calm:'gentle everywhere',swell:'a proper sea',storm:'all or nothing'};
-  TABLE_KEYS.forEach((k)=>{
-    const b=document.createElement('button');
-    b.className='ride'+(k===ride?' on':'');
-    b.innerHTML=`<b>${NAMES[k]}</b><small>rim ×${TABLES[k][0]} · ${BLURB[k]}</small>`;
-    b.addEventListener('click',()=>{ ride=k; save(LS.ride,ride); renderRides(); renderMax(); });
-    el.appendChild(b);
-  });
-}
 const stakeVal=()=>Math.max(0,Math.floor(Number($('stake').value)||0));
-function renderMax(){
-  const st=stakeVal()||10;
-  try{ const q=quote(ride,st); $('max-pay').textContent=fmt(q.maxPayout)+' ◉'; }
-  catch{ $('max-pay').textContent='—'; }
+function renderNotch(){
+  $('notch-name').textContent=NOTCH_NAMES[notch];
+  $('notch-note').textContent=NOTCH_NOTES[notch];
+  $('dream-pay').textContent=fmt(maxPayout(stakeVal()||100))+' ◉';
 }
 function renderControls(){
   const btn=$('drop-btn');
   btn.disabled=dropping||(mode==='tide'&&!!pending);
-  btn.textContent = mode==='tide' ? (pending?'A pearl is on the tide…':'Drop on the next block') : 'Drop the pearl';
-  $('modenote').textContent = mode==='tide'
-    ? 'The next testnet4 block seeds the drop — nobody knows the path yet. Verifiable by anyone, forever.'
-    : 'Practice drops are seeded locally and fall at once — pure fun, not provable.';
+  btn.textContent=mode==='tide'?(pending?'A pearl is on the tide…':'Drop on the next block'):'Drop the pearl';
+  $('modenote').textContent=mode==='tide'
+    ?'The next testnet4 block seeds the drop — nobody knows the fall yet. Verifiable by anyone, forever.'
+    :'Practice drops are seeded locally and fall at once — pure fun, not provable.';
+}
+function fallCell(e){
+  const bits=['×'+SLOT_PAY[e.slot]];
+  if(e.walls) bits.push('🧱'+e.walls);
+  if(e.bumpers) bits.push('🔔');
+  if(e.shell) bits.push('🐚');
+  if(e.run) return '✨ PEARL RUN ✨';
+  return bits.join(' ');
 }
 function renderLog(){
   const tb=$('log-body'); tb.innerHTML='';
   $('drop-count').textContent=log.length?`${log.length} drop${log.length===1?'':'s'}`:'';
-  if(!log.length){ tb.innerHTML='<tr><td colspan="7" style="color:var(--ink-soft)"><i>No pearls yet — the sea is patient.</i></td></tr>'; return; }
+  if(!log.length){ tb.innerHTML='<tr><td colspan="6" style="color:var(--ink-soft)"><i>No pearls yet — the sea is patient.</i></td></tr>'; return; }
   for(const e of log){
     const tr=document.createElement('tr');
-    const proof = e.mode==='tide'
-      ? `<a href="https://mempool.space/testnet4/block-height/${e.height}" target="_blank" rel="noopener">block ${fmt(e.height)}</a> · seed ✓`
-      : '<span class="tag">practice</span>';
-    tr.innerHTML=`<td>#${e.n}</td><td>${e.ride}</td><td>${fmt(e.stake)}</td>
-      <td>×${e.mult}</td><td>${e.bonus?('+'+fmt(e.bonusPay)):'—'}</td>
+    const proof=e.mode==='tide'
+      ?`<a href="https://mempool.space/testnet4/block-height/${e.height}" target="_blank" rel="noopener">block ${fmt(e.height)}</a> · seed ✓`
+      :'<span class="tag">practice</span>';
+    tr.innerHTML=`<td>#${e.n}</td><td>${NOTCH_LBL[e.notch]??e.notch}</td><td>${fmt(e.stake)}</td>
+      <td>${fallCell(e)}</td>
       <td class="${e.delta>=0?'net-w':'net-l'}">${e.delta>=0?'+':MINUS}${fmt(Math.abs(e.delta))}</td>
       <td class="proof">${proof}</td>`;
     tb.appendChild(tr);
   }
 }
-function renderAll(){ renderHeader(); renderRides(); renderMax(); renderControls(); renderLog(); }
-function showBanner(head,sub){ $('banner-head').textContent=head; $('banner-sub').innerHTML=sub; $('banner').style.display='flex'; }
+function renderAll(){ renderHeader(); renderNotch(); renderControls(); renderLog(); }
+function showBanner(head,sub){ $('banner-head').innerHTML=head; $('banner-sub').innerHTML=sub; $('banner').style.display='flex'; }
 function hideBanner(){ $('banner').style.display='none'; }
+
+// notch selection: click the canvas near a notch
+cv.addEventListener('click',(ev)=>{
+  const r=cv.getBoundingClientRect();
+  const x=(ev.clientX-r.left)*(W/r.width), y=(ev.clientY-r.top)*(H/r.height);
+  if(y>TOPY+10) return;
+  let best=null,bd=1e9;
+  for(const d of DROPS){ const dd=Math.abs(px(d)-x); if(dd<bd){ bd=dd; best=d; } }
+  if(best!=null&&bd<PITCH){ notch=best; save(LS.notch,notch); tone(720,0.08,0.08); renderNotch(); }
+});
 
 $('m-practice').addEventListener('click',()=>{ mode='practice'; $('m-practice').classList.add('on'); $('m-tide').classList.remove('on'); renderControls(); });
 $('m-tide').addEventListener('click',()=>{ mode='tide'; $('m-tide').classList.add('on'); $('m-practice').classList.remove('on'); fetchTip().catch(()=>{}); renderControls(); });
-$('stake').addEventListener('input',renderMax);
+$('stake').addEventListener('input',renderNotch);
 $('quick').addEventListener('click',(e)=>{
   const b=e.target.closest('button'); if(!b) return;
-  $('stake').value=b.dataset.q==='max'?Math.max(10,purse):b.dataset.q;
-  renderMax();
+  $('stake').value=b.dataset.q==='max'?Math.max(20,purse):b.dataset.q;
+  renderNotch();
 });
 $('drop-btn').addEventListener('click',async()=>{
   const st=stakeVal();
-  if(st<10||st>purse||dropping||(mode==='tide'&&pending)) return;
+  if(st<20||st>purse||dropping||(mode==='tide'&&pending)) return;
   ac().resume?.();
-  if(mode==='tide'){ try{ await tideDrop(ride,st); }catch{ showBanner('The tide is out of reach','Could not reach the chain — try again shortly.'); } }
-  else practiceDrop(ride,st);
+  if(mode==='tide'){ try{ await tideDrop(); }catch{ showBanner('The tide is out of reach','Could not reach the chain — try again shortly.'); } }
+  else practiceDrop();
 });
 $('sound-btn').addEventListener('click',()=>{ soundOn=!soundOn; save(LS.sound,soundOn); renderHeader(); });
 
+// deterministic demo hook for screenshots/critics (harmless in production)
+window.__demo=async(seed,n)=>{ if(n&&DROPS.includes(n)){ notch=n; renderNotch(); }
+  const stake=stakeVal()||100; purse-=stake; save(LS.purse,purse); renderHeader();
+  await runDrop({seedHex:seed,notchNo:notch,stake}); };
+
 /* boot */
-if(purse<10&&!pending){ purse=1000; save(LS.purse,purse); }
+if(purse<20&&!pending){ purse=1000; save(LS.purse,purse); }
 renderAll();
 fetchTip().catch(()=>{});
 if(pending) watchTide();
