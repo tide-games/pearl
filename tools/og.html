@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>og poster</title>
+<style>body{margin:0;background:#444}canvas{display:block}</style></head>
+<body>
+<canvas id="og" width="1200" height="630"></canvas>
+<script>
+// 1200×630 OG poster for The Pearl — mid-fall, one bounce from fortune.
+const cv=document.getElementById('og'),ctx=cv.getContext('2d');
+const W=1200,H=630;
+let g=ctx.createLinearGradient(0,0,0,H);
+g.addColorStop(0,'#7db4c4');g.addColorStop(.55,'#4d8aa0');g.addColorStop(1,'#1d5d77');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+// light shafts
+ctx.save();ctx.globalAlpha=.09;ctx.fillStyle='#fff';
+for(let i=0;i<4;i++){const x=200+i*280;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+80,0);ctx.lineTo(x-60,H);ctx.lineTo(x-140,H);ctx.closePath();ctx.fill();}
+ctx.restore();
+// kelp
+ctx.lineCap='round';
+[[70,4],[150,3],[1080,4],[1150,3]].forEach(([kx,fr],ki)=>{
+  for(let f=0;f<fr;f++){ctx.strokeStyle=`rgba(46,110,90,${.4-f*.06})`;ctx.lineWidth=9-f;
+    ctx.beginPath();const x0=kx+f*12-fr*5;ctx.moveTo(x0,H-30);
+    for(let s=1;s<=6;s++){const yy=H-30-s*90;const sw=Math.sin(ki*2+f+s*.8)*(6+s*3);
+      ctx.quadraticCurveTo(x0+sw*.6,yy+40,x0+sw,yy);}ctx.stroke();}
+});
+// pins (partial triangle, right-of-center)
+const CX=640,TOP=120,GAP=54,PITCH=78;
+const posX=(r,p)=>CX+(p-r/2)*PITCH, rowY=(r)=>TOP+r*GAP;
+for(let r=0;r<7;r++)for(let p=0;p<=r;p++){
+  const x=posX(r,p),y=rowY(r);
+  const bonus=(r===4&&p===2)||(r===6&&p===3);
+  if(bonus){ctx.fillStyle='#e8c886';ctx.beginPath();ctx.arc(x,y,15,0,7);ctx.fill();
+    ctx.strokeStyle='#8a6508';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='#8a6508';ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();}
+  else{ctx.fillStyle='#d98e75';ctx.beginPath();ctx.arc(x,y,9,0,7);ctx.fill();
+    ctx.strokeStyle='rgba(90,30,20,.5)';ctx.lineWidth=1.5;ctx.stroke();}
+}
+// seabed + oysters
+const sb=ctx.createLinearGradient(0,H-120,0,H);
+sb.addColorStop(0,'rgba(232,215,175,0)');sb.addColorStop(.3,'#cdb98e');sb.addColorStop(1,'#b9a276');
+ctx.fillStyle=sb;ctx.fillRect(0,H-120,W,120);
+const mults=['×0.11','×0.54','×1.74','×27','×163'];
+for(let k=0;k<9;k++){
+  const x=CX+(k-4)*PITCH, hot=k===0||k===8;
+  const lbl=mults[Math.abs(k-4)];
+  ctx.fillStyle=hot?'#e8c886':'#d3c4a8';
+  ctx.strokeStyle='rgba(60,45,25,.55)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(x,H-64,34,22,0,Math.PI,0);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.35)';
+  ctx.beginPath();ctx.ellipse(x,H-68,24,12,0,Math.PI,0);ctx.closePath();ctx.fill();
+  ctx.fillStyle=hot?'#8a6508':'#3d4c59';ctx.font='700 17px system-ui';ctx.textAlign='center';
+  ctx.fillText(lbl, x, H-30);
+}
+// THE pearl — big, mid-bounce, with sparkle trail
+(function(){
+  const x=755,y=248;
+  ctx.fillStyle='rgba(255,255,255,.4)';
+  [[18,-26,8],[34,-48,6],[46,-68,4]].forEach(([dx,dy,r])=>{ctx.globalAlpha=.4;ctx.beginPath();ctx.arc(x-dx,y+dy,r,0,7);ctx.fill();});
+  ctx.globalAlpha=1;
+  const pg=ctx.createRadialGradient(x-8,y-10,3,x,y,30);
+  pg.addColorStop(0,'#fff');pg.addColorStop(.6,'#efe8f8');pg.addColorStop(1,'#c3b8dd');
+  ctx.fillStyle=pg;ctx.beginPath();ctx.arc(x,y,28,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(60,50,80,.4)';ctx.lineWidth=2;ctx.stroke();
+})();
+// title panel
+ctx.fillStyle='rgba(247,241,227,.96)';
+ctx.strokeStyle='#d9cdb4';ctx.lineWidth=2;
+ctx.beginPath();ctx.roundRect(56,64,470,168,18);ctx.fill();ctx.stroke();
+ctx.fillStyle='#1e6f8e';ctx.fillRect(56,64,470,6);
+ctx.fillStyle='#232e38';ctx.font='800 58px "Iowan Old Style",Palatino,Georgia,serif';
+ctx.textAlign='left';ctx.fillText('THE PEARL',84,132);
+ctx.fillStyle='#5c6a76';ctx.font='italic 25px Georgia,serif';
+ctx.fillText('the tide drops the pearl',86,170);
+ctx.fillStyle='#1e6f8e';ctx.font='600 17px system-ui';
+ctx.fillText('twelve bounces · one Bitcoin block · zero secrets',86,202);
+</script>
+</body></html>

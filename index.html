@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Pearl — the tide drops the pearl</title>
+<meta name="description" content="Drop a pearl through the coral pins — the next Bitcoin block writes every bounce. Three rides, one honest edge, verifiable by anyone forever.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Pearl — the tide drops the pearl">
+<meta property="og:description" content="Twelve bounces, thirteen oysters, one seed: the next Bitcoin block writes the whole trajectory. Pick calm, swell or storm — the shapes differ, the edge does not.">
+<meta property="og:url" content="https://tide-games.github.io/pearl/">
+<meta property="og:image" content="https://tide-games.github.io/pearl/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Pearl — the tide drops the pearl">
+<meta name="twitter:description" content="Twelve bounces, one Bitcoin block, zero secrets.">
+<meta name="twitter:image" content="https://tide-games.github.io/pearl/og-image.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='54' r='30' fill='%23f2ecfa'/><circle cx='42' cy='45' r='9' fill='white'/></svg>">
+<style>
+  :root{
+    --paper:#f7f1e3; --paper-2:#fdf9ee; --ink:#232e38; --ink-soft:#5c6a76;
+    --line:#d9cdb4; --accent:#1e6f8e; --gold:#c9a24b; --gold-soft:#e8d9a8;
+    --coral:#c96a4f; --pearl:#f2ecfa; --danger:#a63d2e;
+    --serif:"Iowan Old Style",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{
+    background:radial-gradient(1100px 500px at 50% -140px,var(--paper-2) 0%,var(--paper) 60%),var(--paper);
+    color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+    min-height:100vh; padding-bottom:44px;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:14px 16px 40px}
+  /* ---------- header ---------- */
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:6px 2px 10px}
+  h1{margin:0;font:800 30px/1 var(--serif);letter-spacing:.04em}
+  h1 .orb{display:inline-block;width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,#e8dff5 55%,#c9bfe0);
+    box-shadow:0 1px 4px rgba(35,46,56,.3);vertical-align:-2px;margin-right:6px}
+  .tagline{color:var(--ink-soft);font-style:italic;font-family:var(--serif)}
+  .spacer{flex:1}
+  .chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;
+    background:#fff;border:1px solid var(--line);font-weight:600;white-space:nowrap;
+    font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(35,46,56,.06)}
+  .chip small{font-weight:500;color:var(--ink-soft)}
+  .chip.purse{border-color:#dcbf74;background:#fdf8ea}
+  button.chip{cursor:pointer;font:inherit;font-weight:600;color:var(--ink)}
+  button.chip:hover{border-color:var(--accent)}
+  .ic{width:1em;height:1em;vertical-align:-.125em;fill:currentColor}
+  /* ---------- board ---------- */
+  .board-frame{position:relative;border-radius:16px;overflow:hidden;
+    border:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(35,46,56,.5);background:#0e3a4d}
+  canvas{display:block;width:100%;height:auto}
+  /* ---------- layout ---------- */
+  .cols{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-top:14px}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+    box-shadow:0 1px 3px rgba(35,46,56,.07)}
+  .card h2{margin:0 0 10px;font:700 13px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .card h2 .right{float:right;font-weight:600;letter-spacing:0;text-transform:none}
+  /* ride picker */
+  .rides{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .ride{border:1.5px solid var(--line);border-radius:11px;padding:9px 10px;cursor:pointer;background:#fff;text-align:left}
+  .ride:hover{border-color:var(--accent)}
+  .ride.on{border-color:var(--accent);background:#eef6fa}
+  .ride b{display:block;font-size:14px}
+  .ride small{color:var(--ink-soft);display:block;margin-top:2px;font-variant-numeric:tabular-nums}
+  /* slip */
+  .mode{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
+  .mode button{flex:1;font:600 14px system-ui;padding:8px 0;border:0;background:#fff;cursor:pointer;color:var(--ink-soft)}
+  .mode button.on{background:var(--accent);color:#fff}
+  .stakebar{display:flex;align-items:center;gap:8px;margin:8px 0 8px}
+  .stakebar label{font:700 12px system-ui;letter-spacing:.1em;color:var(--ink-soft)}
+  .stakebar input{flex:1;font:700 18px/1 system-ui;text-align:right;padding:9px 12px;border:1px solid var(--line);border-radius:10px;min-width:0}
+  .quick{display:flex;gap:7px;margin-bottom:10px}
+  .quick button{flex:1;font:600 13px system-ui;padding:7px 0;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer}
+  .quick button:hover{border-color:var(--accent)}
+  .maxline{display:flex;justify-content:space-between;background:#fdf8ea;border:1px solid #eadfc0;
+    border-radius:9px;padding:8px 11px;font-size:13.5px;margin-bottom:10px}
+  .maxline b{font-variant-numeric:tabular-nums}
+  #drop-btn{width:100%;font:700 16px system-ui;padding:12px 0;border:0;border-radius:11px;cursor:pointer;
+    color:#fff;background:linear-gradient(#2a86a8,var(--accent));box-shadow:0 6px 14px -7px rgba(30,111,142,.6)}
+  #drop-btn:hover{filter:brightness(1.06)}
+  #drop-btn[disabled]{opacity:.55;cursor:default;filter:none}
+  .modenote{color:var(--ink-soft);font-size:12.5px;margin-top:8px;line-height:1.5}
+  /* log */
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th{font:700 11px system-ui;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:4px 8px}
+  td{padding:6px 8px;border-top:1px solid #f0e9d8;font-variant-numeric:tabular-nums}
+  .net-w{color:#1c7a3d;font-weight:700}.net-l{color:var(--danger);font-weight:700}
+  .proof a{color:var(--accent);text-decoration:none}.proof a:hover{text-decoration:underline}
+  .tag{font-size:11px;padding:1.5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft)}
+  footer{margin-top:18px;color:var(--ink-soft);font-size:13px;line-height:1.6}
+  footer a{color:var(--accent)}
+  /* banner */
+  #banner{position:absolute;left:0;right:0;top:12px;display:none;align-items:flex-start;justify-content:center;pointer-events:none}
+  #banner .inner{background:rgba(247,241,227,.96);border:1px solid var(--line);border-radius:14px;
+    padding:16px 26px;text-align:center;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);max-width:80%}
+  #banner .head{font:800 22px var(--serif)}
+  #banner .sub{color:var(--ink-soft);margin-top:4px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="orb"></span>THE PEARL</h1>
+    <span class="tagline">the tide drops the pearl</span>
+    <span class="spacer"></span>
+    <span class="chip" id="tide-chip" title="Bitcoin testnet4 tip">〜 <small>tide</small> <span id="tide-height">—</span></span>
+    <span class="chip purse">◉ <small>purse</small> <span id="purse">0</span></span>
+    <button class="chip" id="sound-btn" aria-label="toggle sound"><span id="sound-ic">🔊</span></button>
+  </header>
+
+  <div class="board-frame">
+    <canvas id="sea" width="1028" height="560"></canvas>
+    <div id="banner"><div class="inner"><div class="head" id="banner-head"></div><div class="sub" id="banner-sub"></div></div></div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h2>The Log <span class="right" id="drop-count"></span></h2>
+      <table>
+        <thead><tr><th>Drop</th><th>Ride</th><th>Stake</th><th>Slot</th><th>Bonus</th><th>Net</th><th>Proof</th></tr></thead>
+        <tbody id="log-body"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Drop slip</h2>
+      <div class="mode" id="mode">
+        <button id="m-practice" class="on">◉ Practice</button>
+        <button id="m-tide">〜 The Tide</button>
+      </div>
+      <div class="rides" id="rides"></div>
+      <div class="stakebar"><label>STAKE</label><input id="stake" type="number" min="10" step="1" value="50" inputmode="numeric"></div>
+      <div class="quick" id="quick">
+        <button data-q="10">10</button><button data-q="50">50</button><button data-q="100">100</button><button data-q="max">Max</button>
+      </div>
+      <div class="maxline"><span>Best drop pays</span><b id="max-pay">—</b></div>
+      <button id="drop-btn">Drop the pearl</button>
+      <p class="modenote" id="modenote">Practice drops are seeded locally and fall at once — pure fun, not provable.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>Twelve bounces are twelve bits of <code>sha256(blockHash | mark)</code> — the seed <i>is</i> the trajectory,
+    and the fall you watch replays it bit for bit. Three rides, one edge (≈3%), pinned by enumerating all 4,096
+    paths in <a href="pearl.js">pearl.js</a> · <a href="tests.js">tests</a> ·
+    a <a href="https://tide-games.github.io/">tide-games</a> boat.</p>
+  </footer>
+</div>
+
+<script type="module">
+import { ROWS, SLOTS, BONUS_PEGS, BONUS_PAY, TABLES, TABLE_KEYS, pathFromSeed, trackOf, settle, quote }
+  from './pearl.js';
+
+/* ================================================================ state */
+const LS = { purse:'pearl-purse', log:'pearl-log', drops:'pearl-drops', sound:'pearl-sound',
+             pending:'pearl-pending', ride:'pearl-ride' };
+const load = (k,d)=>{ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?d:v; }catch{ return d; } };
+const save = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
+const $ = (id)=>document.getElementById(id);
+const MEMPOOL = 'https://mempool.space/testnet4/api';
+const fmt = (n)=>Number(n).toLocaleString('en-US');
+const MINUS = '−';
+
+let purse = load(LS.purse, 1000);
+let drops = load(LS.drops, 0);
+let log = load(LS.log, []);
+let pending = load(LS.pending, null); // {height, mark, ride, stake, placedAt}
+let ride = load(LS.ride, 'calm');
+let soundOn = load(LS.sound, true);
+let mode = 'practice';
+let dropping = false;
+
+const randHex = (n)=>Array.from(crypto.getRandomValues(new Uint8Array(n)),(b)=>b.toString(16).padStart(2,'0')).join('');
+async function sha256hex(s){
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(d),(b)=>b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ================================================================ sound */
+let _ac=null; const ac=()=>_ac||(_ac=new (window.AudioContext||window.webkitAudioContext)());
+function env(g,t,a,d,v){ g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+a); g.gain.exponentialRampToValueAtTime(0.001,t+a+d); }
+function plink(freq){
+  if(!soundOn) return; const c=ac(),t=c.currentTime;
+  const o=c.createOscillator(),g=c.createGain(); o.type='sine'; o.frequency.value=freq;
+  o.connect(g); g.connect(c.destination); env(g,t,0.004,0.09,0.12); o.start(t); o.stop(t+0.12);
+}
+function shimmer(){
+  if(!soundOn) return; const c=ac(),t=c.currentTime;
+  [880,1108,1318].forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain();
+    o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(c.destination);
+    env(g,t+i*0.06,0.01,0.35,0.09); o.start(t+i*0.06); o.stop(t+i*0.06+0.4); });
+}
+function thud(){
+  if(!soundOn) return; const c=ac(),t=c.currentTime;
+  const o=c.createOscillator(),g=c.createGain(); o.type='triangle';
+  o.frequency.setValueAtTime(180,t); o.frequency.exponentialRampToValueAtTime(70,t+0.18);
+  o.connect(g); g.connect(c.destination); env(g,t,0.005,0.2,0.25); o.start(t); o.stop(t+0.25);
+}
+
+/* ================================================================ board geometry */
+const cv=$('sea'), ctx=cv.getContext('2d');
+const W=1028, H=560;
+const TOP=74;                 // first pin row y
+const ROWGAP=(H-TOP-96)/ROWS; // vertical gap between rows
+const PITCH=64;               // horizontal pitch between adjacent positions
+const CX=W/2;
+// pearl position at track pos p after r rows: x = CX + (p - r/2)*PITCH
+const posX=(r,p)=>CX+(p-r/2)*PITCH;
+const rowY=(r)=>TOP+r*ROWGAP;
+const SLOTY=H-72;
+
+function isBonus(r,p){ return BONUS_PEGS.some(b=>b.row===r&&b.pos===p); }
+
+/* pearl animation state */
+let anim=null; // {path, track, t0, dur, ride, stake, result, landed}
+let floaters=[]; // {text, x, y, color, t0} — rise and fade
+let pegKnocks={}; // "r:p" -> t0 of last strike, for the wobble
+
+function drawBoard(now){
+  ctx.clearRect(0,0,W,H);
+  // water
+  let g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#7db4c4'); g.addColorStop(0.5,'#4d8aa0'); g.addColorStop(1,'#1d5d77');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // light shafts
+  ctx.save(); ctx.globalAlpha=0.08; ctx.fillStyle='#fff';
+  for(let i=0;i<4;i++){ ctx.beginPath();
+    const x=140+i*240; ctx.moveTo(x,0); ctx.lineTo(x+70,0); ctx.lineTo(x-40,H); ctx.lineTo(x-110,H); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+  // drifting motes
+  ctx.fillStyle='rgba(255,255,255,.25)';
+  for(let i=0;i<26;i++){
+    const x=(i*173+((now||0)*0.01))%W, y=(i*97)%H;
+    ctx.fillRect(x, y, 2, 2);
+  }
+  // kelp in the margins — the board breathes
+  ctx.save(); ctx.lineCap='round';
+  const kelps=[[70,3],[150,4],[900+CX-514,3],[985+CX-514,5]];
+  kelps.forEach(([kx,fronds],ki)=>{
+    for(let f=0;f<fronds;f++){
+      ctx.strokeStyle=`rgba(46,110,90,${0.35-f*0.05})`;
+      ctx.lineWidth=7-f;
+      ctx.beginPath();
+      const x0=kx+f*10-fronds*4;
+      ctx.moveTo(x0,H-40);
+      for(let s=1;s<=6;s++){
+        const yy=H-40-s*((H-160)/6);
+        const sway=Math.sin(((now||0)/1400)+ki+f+s*0.7)*(4+s*2.4);
+        ctx.quadraticCurveTo(x0+sway*0.6, yy+30, x0+sway, yy);
+      }
+      ctx.stroke();
+    }
+  });
+  ctx.restore();
+  // pins: row r has r+1 landing positions ABOVE it; draw pegs the pearl bounces on —
+  // peg grid: row r (0..ROWS-1) pegs sit between positions: at x of (r, p±?) — draw
+  // pegs at every position of row r+? Simplest true-to-path: peg the pearl strikes
+  // at row r sits at (rowY(r), posX(r, track[r])) — draw the full triangle:
+  for(let r=0;r<ROWS;r++){
+    for(let p=0;p<=r;p++){
+      const x=posX(r,p), y=rowY(r);
+      const bonus=isBonus(r,p);
+      // struck pegs wobble for a beat — the board answers the pearl
+      const k=pegKnocks[r+':'+p];
+      const knock=k&&now-k<260 ? 1+0.5*Math.sin(((now-k)/260)*Math.PI) : 1;
+      if(bonus){
+        // a golden shell
+        ctx.fillStyle='#e8c886';
+        ctx.beginPath(); ctx.arc(x,y,9*knock,0,7); ctx.fill();
+        ctx.strokeStyle='#8a6508'; ctx.lineWidth=1.5; ctx.stroke();
+        ctx.fillStyle='#8a6508';
+        ctx.beginPath(); ctx.arc(x,y,3*knock,0,7); ctx.fill();
+      }else{
+        ctx.fillStyle=knock>1?'#f0b49a':'#d98e75';
+        ctx.beginPath(); ctx.arc(x,y,5.5*knock,0,7); ctx.fill();
+        ctx.strokeStyle='rgba(90,30,20,.5)'; ctx.lineWidth=1; ctx.stroke();
+      }
+    }
+  }
+  // seabed — the oysters need ground under them
+  const sb=ctx.createLinearGradient(0,SLOTY-6,0,H);
+  sb.addColorStop(0,'rgba(232,215,175,0)'); sb.addColorStop(0.25,'#cdb98e'); sb.addColorStop(1,'#b9a276');
+  ctx.fillStyle=sb; ctx.fillRect(0,SLOTY-6,W,H-SLOTY+6);
+  ctx.fillStyle='rgba(120,100,60,.18)';
+  for(let i=0;i<40;i++) ctx.fillRect((i*89+13)%W, SLOTY+8+((i*37)%(H-SLOTY-14)), 2, 2);
+
+  // slots: 13 oysters
+  const m=TABLES[ride];
+  for(let k=0;k<SLOTS;k++){
+    const x=posX(ROWS,k);
+    const hot=Math.max(...m)===m[k];
+    const opened = anim && anim.landed && anim.track[ROWS]===k;
+    // shell
+    ctx.fillStyle=hot?'#e8c886':'#d3c4a8';
+    ctx.strokeStyle='rgba(60,45,25,.55)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.ellipse(x,SLOTY+16,26,17,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.35)';
+    ctx.beginPath(); ctx.ellipse(x,SLOTY+13,18,9,0,Math.PI,0); ctx.closePath(); ctx.fill();
+    if(opened){
+      // the top shell swings open behind the landed pearl
+      ctx.save(); ctx.translate(x-24,SLOTY+15); ctx.rotate(-0.9);
+      ctx.fillStyle=hot?'#f0d6a2':'#e0d3b8';
+      ctx.strokeStyle='rgba(60,45,25,.5)'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.ellipse(24,0,25,15,0,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+    // multiplier — light plate so the numbers read on deep water
+    ctx.font='700 13px system-ui'; ctx.textAlign='center';
+    ctx.fillStyle=hot?'#8a6508':'#3d4c59';
+    ctx.fillText('×'+m[k], x, SLOTY+44);
+    if(hot){ ctx.strokeStyle='rgba(255,217,122,.5)'; ctx.lineWidth=1;
+      ctx.strokeText('×'+m[k], x, SLOTY+44); }
+  }
+  // floaters (+N texts drifting up)
+  if(now){
+    floaters=floaters.filter(f=>now-f.t0<900);
+    for(const f of floaters){
+      const e=(now-f.t0)/900;
+      ctx.globalAlpha=1-e;
+      ctx.fillStyle=f.color; ctx.font='800 15px system-ui'; ctx.textAlign='center';
+      ctx.fillText(f.text, f.x, f.y-e*34);
+      ctx.globalAlpha=1;
+    }
+  }
+  // the pearl
+  if(anim){
+    const {x,y,rowHit}=pearlAt(now);
+    // sparkle trail
+    ctx.fillStyle='rgba(255,255,255,.5)';
+    for(let i=1;i<=4;i++){
+      const p2=pearlAt(now-i*40);
+      ctx.globalAlpha=0.5-(i*0.11);
+      ctx.beginPath(); ctx.arc(p2.x,p2.y,7-i,0,7); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    const pg=ctx.createRadialGradient(x-3,y-4,1,x,y,10);
+    pg.addColorStop(0,'#fff'); pg.addColorStop(0.6,'#efe8f8'); pg.addColorStop(1,'#c9bfe0');
+    ctx.fillStyle=pg;
+    ctx.beginPath(); ctx.arc(x,y,10,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(60,50,80,.4)'; ctx.lineWidth=1; ctx.stroke();
+    if(rowHit!=null){ // flash the struck peg
+      const p=anim.track[rowHit];
+      ctx.strokeStyle='rgba(255,255,255,.8)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(posX(rowHit,p),rowY(rowHit),11,0,7); ctx.stroke();
+    }
+  }
+}
+
+// choreographed fall: wall-clock, a HANG of anticipation, then one row per
+// STEP ms with a real bounce arc
+const STEP=330, HANG=420;
+function pearlAt(now){
+  const e=Math.max(0, now-anim.t0)-HANG;
+  if(e<0){ // hanging at the top, gathering nerve
+    const sway=Math.sin((now-anim.t0)/120)*3;
+    return {x:CX+sway, y:16, rowHit:null};
+  }
+  const r=Math.min(ROWS, Math.floor(e/STEP));
+  const frac=r>=ROWS?1:(e%STEP)/STEP;
+  if(r>=ROWS){
+    // nestled into the open oyster
+    return {x:posX(ROWS,anim.track[ROWS]), y:SLOTY+10, rowHit:null};
+  }
+  const p0=anim.track[r], p1=anim.track[r+1];
+  const x0=posX(r,p0), x1=posX(r+1,p1);
+  const y0=r===0?18:rowY(r-1)+8, y1=rowY(r)+8;
+  // eased fall with a real bounce arc
+  const t=frac<0.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;
+  const x=x0+(x1-x0)*t;
+  const y=y0+(y1-y0)*t - Math.sin(frac*Math.PI)*18;
+  return {x,y,rowHit:frac>0.82?r:null};
+}
+
+let lastPlinkRow=-1;
+function frame(){
+  const now=performance.now();
+  try{
+    drawBoard(now);
+    if(anim && !anim.landed){
+      const e=now-anim.t0-HANG;
+      const r=Math.floor(e/STEP);
+      if(r>lastPlinkRow && r<=ROWS-1 && r>=0){
+        lastPlinkRow=r;
+        const p=anim.track[r];
+        pegKnocks[r+':'+p]=now;
+        plink(isBonus(r,p)?1200:500+r*40);
+        if(isBonus(r,p)){
+          shimmer();
+          floaters.push({ text:'+'+fmt(Math.floor(anim.stake*BONUS_PAY)),
+            x:posX(r,p), y:rowY(r)-14, color:'#ffe9a8', t0:now });
+        }
+      }
+      if(e>=ROWS*STEP+150){ anim.landed=true; landPearl(); }
+    }
+  }catch(err){ console.log('[pearl] frame died:', err.message); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ================================================================ drop flow */
+async function runDrop({seedHex, rideKey, stake, tideInfo}){
+  dropping=true; renderControls();
+  // settle the books BEFORE the theatre — a reload mid-fall can never eat a stake
+  const out=settle({table:rideKey, stake, seedHex});
+  purse+=out.payout; save(LS.purse,purse);
+  drops++; save(LS.drops,drops);
+  log.unshift({ n:drops, ride:rideKey, stake, slot:out.slot, mult:out.multiplier,
+    bonus:out.hits.length, bonusPay:out.bonusPay, delta:out.delta,
+    mode:tideInfo?'tide':'practice', height:tideInfo?.height??null,
+    mark:tideInfo?.mark??null, at:Date.now() });
+  log=log.slice(0,60); save(LS.log,log);
+  // theatre
+  const path=pathFromSeed(seedHex);
+  lastPlinkRow=-1;
+  anim={path, track:trackOf(path), t0:performance.now(), ride:rideKey, stake, result:out, landed:false};
+  hideBanner();
+  await new Promise((res)=>{ anim._resolve=res; });
+}
+function landPearl(){
+  const out=anim.result;
+  thud();
+  if(out.payout>0) shimmer();
+  const x=posX(ROWS,anim.track[ROWS]);
+  floaters.push({ text:(out.delta>=0?'+':MINUS)+fmt(Math.abs(out.delta)),
+    x, y:SLOTY-8, color:out.delta>=0?'#b6f0c0':'#ffb9a6', t0:performance.now() });
+  showBanner(out.delta>=0?'A pearl of price!':'The tide gives, the tide takes',
+    `Slot ×${out.multiplier}${out.bonusPay?` · bonus shells +${fmt(out.bonusPay)}`:''} · net <b>${out.delta>=0?'+':MINUS}${fmt(Math.abs(out.delta))}</b>`);
+  renderAll();
+  dropping=false; renderControls();
+  anim._resolve?.();
+  setTimeout(hideBanner, 3500);
+}
+
+async function practiceDrop(rideKey, stake){
+  purse-=stake; save(LS.purse,purse); renderHeader();
+  const seed=await sha256hex('practice|'+randHex(16));
+  await runDrop({seedHex:seed, rideKey, stake});
+}
+
+/* ---------------- the tide ---------------- */
+let tipHeight=0, tipAt=0;
+async function fetchTip(){
+  if(Date.now()-tipAt<20000) return tipHeight;
+  const r=await fetch(MEMPOOL+'/blocks/tip/height');
+  if(!r.ok) throw new Error('tide '+r.status);
+  tipHeight=Number((await r.text()).trim()); tipAt=Date.now();
+  $('tide-height').textContent=fmt(tipHeight);
+  return tipHeight;
+}
+const blockHashCache={};
+async function hashAtHeight(h,{cacheOk=false}={}){
+  if(cacheOk&&blockHashCache[h]) return blockHashCache[h];
+  const r=await fetch(MEMPOOL+'/block-height/'+h);
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error('block '+r.status);
+  const hash=(await r.text()).trim();
+  if(cacheOk) blockHashCache[h]=hash;
+  return hash;
+}
+async function tideDrop(rideKey, stake){
+  const tip=await fetchTip();
+  const height=tip+1;                    // a block nobody has seen
+  const mark=randHex(16);
+  purse-=stake; save(LS.purse,purse);
+  pending={height, mark, ride:rideKey, stake, placedAt:Date.now()};
+  save(LS.pending,pending);
+  renderAll();
+  showBanner('The pearl waits on the tide', `It drops on block <b>${fmt(height)}</b> — about ten minutes.`);
+  watchTide();
+}
+let tideTimer=null;
+async function trySettleTide(){
+  if(!pending) return false;
+  tipAt=0; const tip=await fetchTip();
+  if(tip<pending.height+1) return false;  // 1 conf on top — reorg lesson
+  const hash=await hashAtHeight(pending.height,{cacheOk:true});
+  if(!hash) return false;
+  if(tideTimer){ clearInterval(tideTimer); tideTimer=null; }
+  const p=pending; pending=null; save(LS.pending,null);
+  const seed=await sha256hex(hash+'|'+p.mark);
+  await runDrop({seedHex:seed, rideKey:p.ride, stake:p.stake,
+    tideInfo:{height:p.height, mark:p.mark, blockHash:hash}});
+  return true;
+}
+function watchTide(){
+  if(tideTimer||!pending) return;
+  tideTimer=setInterval(()=>{ trySettleTide().catch(()=>{}); fetchTip().catch(()=>{}); },30000);
+  trySettleTide().catch(()=>{});
+}
+
+/* ================================================================ UI */
+function renderHeader(){ $('purse').textContent=fmt(purse); $('sound-ic').textContent=soundOn?'🔊':'🔇'; }
+function renderRides(){
+  const el=$('rides'); el.innerHTML='';
+  const NAMES={calm:'Calm',swell:'Swell',storm:'Storm'};
+  const BLURB={calm:'gentle everywhere',swell:'a proper sea',storm:'all or nothing'};
+  TABLE_KEYS.forEach((k)=>{
+    const b=document.createElement('button');
+    b.className='ride'+(k===ride?' on':'');
+    b.innerHTML=`<b>${NAMES[k]}</b><small>rim ×${TABLES[k][0]} · ${BLURB[k]}</small>`;
+    b.addEventListener('click',()=>{ ride=k; save(LS.ride,ride); renderRides(); renderMax(); });
+    el.appendChild(b);
+  });
+}
+const stakeVal=()=>Math.max(0,Math.floor(Number($('stake').value)||0));
+function renderMax(){
+  const st=stakeVal()||10;
+  try{ const q=quote(ride,st); $('max-pay').textContent=fmt(q.maxPayout)+' ◉'; }
+  catch{ $('max-pay').textContent='—'; }
+}
+function renderControls(){
+  const btn=$('drop-btn');
+  btn.disabled=dropping||(mode==='tide'&&!!pending);
+  btn.textContent = mode==='tide' ? (pending?'A pearl is on the tide…':'Drop on the next block') : 'Drop the pearl';
+  $('modenote').textContent = mode==='tide'
+    ? 'The next testnet4 block seeds the drop — nobody knows the path yet. Verifiable by anyone, forever.'
+    : 'Practice drops are seeded locally and fall at once — pure fun, not provable.';
+}
+function renderLog(){
+  const tb=$('log-body'); tb.innerHTML='';
+  $('drop-count').textContent=log.length?`${log.length} drop${log.length===1?'':'s'}`:'';
+  if(!log.length){ tb.innerHTML='<tr><td colspan="7" style="color:var(--ink-soft)"><i>No pearls yet — the sea is patient.</i></td></tr>'; return; }
+  for(const e of log){
+    const tr=document.createElement('tr');
+    const proof = e.mode==='tide'
+      ? `<a href="https://mempool.space/testnet4/block-height/${e.height}" target="_blank" rel="noopener">block ${fmt(e.height)}</a> · seed ✓`
+      : '<span class="tag">practice</span>';
+    tr.innerHTML=`<td>#${e.n}</td><td>${e.ride}</td><td>${fmt(e.stake)}</td>
+      <td>×${e.mult}</td><td>${e.bonus?('+'+fmt(e.bonusPay)):'—'}</td>
+      <td class="${e.delta>=0?'net-w':'net-l'}">${e.delta>=0?'+':MINUS}${fmt(Math.abs(e.delta))}</td>
+      <td class="proof">${proof}</td>`;
+    tb.appendChild(tr);
+  }
+}
+function renderAll(){ renderHeader(); renderRides(); renderMax(); renderControls(); renderLog(); }
+function showBanner(head,sub){ $('banner-head').textContent=head; $('banner-sub').innerHTML=sub; $('banner').style.display='flex'; }
+function hideBanner(){ $('banner').style.display='none'; }
+
+$('m-practice').addEventListener('click',()=>{ mode='practice'; $('m-practice').classList.add('on'); $('m-tide').classList.remove('on'); renderControls(); });
+$('m-tide').addEventListener('click',()=>{ mode='tide'; $('m-tide').classList.add('on'); $('m-practice').classList.remove('on'); fetchTip().catch(()=>{}); renderControls(); });
+$('stake').addEventListener('input',renderMax);
+$('quick').addEventListener('click',(e)=>{
+  const b=e.target.closest('button'); if(!b) return;
+  $('stake').value=b.dataset.q==='max'?Math.max(10,purse):b.dataset.q;
+  renderMax();
+});
+$('drop-btn').addEventListener('click',async()=>{
+  const st=stakeVal();
+  if(st<10||st>purse||dropping||(mode==='tide'&&pending)) return;
+  ac().resume?.();
+  if(mode==='tide'){ try{ await tideDrop(ride,st); }catch{ showBanner('The tide is out of reach','Could not reach the chain — try again shortly.'); } }
+  else practiceDrop(ride,st);
+});
+$('sound-btn').addEventListener('click',()=>{ soundOn=!soundOn; save(LS.sound,soundOn); renderHeader(); });
+
+/* boot */
+if(purse<10&&!pending){ purse=1000; save(LS.purse,purse); }
+renderAll();
+fetchTip().catch(()=>{});
+if(pending) watchTide();
+</script>
+</body>
+</html>
